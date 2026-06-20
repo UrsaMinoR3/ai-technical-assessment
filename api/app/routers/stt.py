@@ -22,7 +22,8 @@ ALLOWED_MIMETYPES = {
 }
 
 
-def _group_words_by_speaker(words: list) -> list[SpeakerSegment]:
+def _group_words_by_speaker(words: list[dict]) -> list[SpeakerSegment]:
+    """Group consecutive word dicts (from Deepgram JSON) into speaker segments."""
     if not words:
         return []
 
@@ -33,7 +34,7 @@ def _group_words_by_speaker(words: list) -> list[SpeakerSegment]:
     current_end = 0.0
 
     for word in words:
-        speaker = getattr(word, "speaker", None)
+        speaker = word.get("speaker")
         if speaker != current_speaker:
             if current_words:
                 segments.append(
@@ -45,12 +46,12 @@ def _group_words_by_speaker(words: list) -> list[SpeakerSegment]:
                     )
                 )
             current_speaker = speaker
-            current_words = [word.word]
-            current_start = float(getattr(word, "start", 0))
-            current_end = float(getattr(word, "end", 0))
+            current_words = [word.get("word", "")]
+            current_start = float(word.get("start", 0))
+            current_end = float(word.get("end", 0))
         else:
-            current_words.append(word.word)
-            current_end = float(getattr(word, "end", 0))
+            current_words.append(word.get("word", ""))
+            current_end = float(word.get("end", 0))
 
     if current_words:
         segments.append(
@@ -105,19 +106,19 @@ async def speech_to_text(
 
         response = await asyncio.to_thread(transcribe_audio_sync, audio_bytes, mimetype)
 
-        metadata = getattr(response, "metadata", None)
-        duration = float(getattr(metadata, "duration", 0.0))
+        # Parse Deepgram JSON response
+        metadata = response.get("metadata", {})
+        duration = float(metadata.get("duration", 0.0))
 
-        results = getattr(response, "results", None)
-        channels = getattr(results, "channels", []) or []
-        channel = channels[0] if channels else None
+        channels = response.get("results", {}).get("channels", [])
+        channel = channels[0] if channels else {}
 
-        language = getattr(channel, "detected_language", "unknown") if channel else "unknown"
-        alternatives = getattr(channel, "alternatives", []) or [] if channel else []
-        alternative = alternatives[0] if alternatives else None
+        language = channel.get("detected_language", "unknown") or "unknown"
+        alternatives = channel.get("alternatives", [])
+        alternative = alternatives[0] if alternatives else {}
 
-        transcript = getattr(alternative, "transcript", "") if alternative else ""
-        words = getattr(alternative, "words", []) if alternative else []
+        transcript = alternative.get("transcript", "")
+        words = alternative.get("words", [])
 
         speakers = _group_words_by_speaker(words)
         latency_ms = (time.perf_counter() - start) * 1000
