@@ -1,21 +1,36 @@
 import base64
 import json
+import re
 
 from openai import AsyncOpenAI
 
 from ..core.config import settings
 
-_client: AsyncOpenAI | None = None
-
 
 def _get_client() -> AsyncOpenAI:
-    global _client
-    if _client is None:
-        _client = AsyncOpenAI(
-            api_key=settings.azure_openai_key,
-            base_url=settings.azure_openai_base_url,
-        )
-    return _client
+    # Fresh client per call — avoids stale credentials after env changes
+    return AsyncOpenAI(
+        api_key=settings.azure_openai_key,
+        base_url=settings.azure_openai_base_url,
+    )
+
+
+def _extract_json(text: str) -> dict:
+    """Parse JSON from model response, handling markdown code blocks gracefully."""
+    if not text:
+        raise ValueError("Model returned empty content")
+
+    # Strip markdown code fences if present (```json ... ```)
+    clean = re.sub(r"^```(?:json)?\s*|\s*```$", "", text.strip(), flags=re.MULTILINE)
+
+    try:
+        return json.loads(clean)
+    except json.JSONDecodeError:
+        # Last resort: grab the first {...} block
+        match = re.search(r"\{.*\}", clean, re.DOTALL)
+        if match:
+            return json.loads(match.group())
+        raise ValueError(f"Could not parse JSON from model response: {text[:200]}")
 
 
 async def analyze_document(image_bytes: bytes, content_type: str) -> tuple[dict, dict]:
@@ -50,13 +65,21 @@ async def analyze_document(image_bytes: bytes, content_type: str) -> tuple[dict,
             }
         ],
         max_tokens=1000,
-        response_format={"type": "json_object"},
     )
 
     content = response.choices[0].message.content
+    finish_reason = response.choices[0].finish_reason
+
+    if not content:
+        raise ValueError(
+            f"Model returned no content (finish_reason={finish_reason}). "
+            "The image may have triggered a safety filter or is unreadable."
+        )
+
     usage = {
         "prompt_tokens": response.usage.prompt_tokens,
         "completion_tokens": response.usage.completion_tokens,
         "total_tokens": response.usage.total_tokens,
     }
-    return json.loads(content), usage
+
+    return _extract_json(content), usage
