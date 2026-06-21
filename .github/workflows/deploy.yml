@@ -1,0 +1,92 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/api
+
+jobs:
+  # ── 1. Build & push Docker image ──────────────────────────────────────────
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./api
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  # ── 2. Smoke-test the image ────────────────────────────────────────────────
+  test:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    needs: build
+
+    services:
+      db:
+        image: postgres:15
+        env:
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run API and smoke-test /health
+        env:
+          DATABASE_URL: postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@localhost:5432/${{ secrets.DB_NAME }}
+          API_KEY: ${{ secrets.API_KEY }}
+          AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+          AZURE_OPENAI_BASE_URL: ${{ secrets.AZURE_OPENAI_BASE_URL }}
+          AZURE_OPENAI_MODEL: ${{ secrets.AZURE_OPENAI_MODEL }}
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+        run: |
+          cd api
+          pip install -r requirements.txt
+          uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+          sleep 5
+          curl -f http://localhost:8000/health | grep '"status":"ok"'
+          echo "Smoke test passed!"
