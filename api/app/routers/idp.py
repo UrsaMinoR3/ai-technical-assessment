@@ -34,7 +34,7 @@ async def analyze_document_endpoint(
     http_status = 200
     try:
         image_bytes = await image.read()
-        extracted, usage = await analyze_document(image_bytes, image.content_type)
+        parsed, flat_fields, annotations, usage = await analyze_document(image_bytes, image.content_type)
 
         latency_ms = (time.perf_counter() - start) * 1000
         usage_str = (
@@ -47,7 +47,7 @@ async def analyze_document_endpoint(
             RequestLog(
                 endpoint="/idp/analyze",
                 input_data=filename,
-                output_ref=str(extracted)[:500],
+                output_ref=str(flat_fields)[:500],
                 external_usage=usage_str,
                 latency_ms=latency_ms,
                 http_status=http_status,
@@ -56,9 +56,10 @@ async def analyze_document_endpoint(
         db.commit()
 
         return IDPResponse(
-            document_type=extracted.get("document_type", "unknown"),
-            extracted_fields=extracted.get("extracted_fields", {}),
-            confidence=extracted.get("confidence", "low"),
+            document_type=parsed.get("document_type", "unknown"),
+            extracted_fields=flat_fields,
+            annotations=annotations,
+            confidence=parsed.get("confidence", "low"),
         )
 
     except HTTPException:

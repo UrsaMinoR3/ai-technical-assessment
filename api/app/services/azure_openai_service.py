@@ -8,7 +8,6 @@ from ..core.config import settings
 
 
 def _get_client() -> AsyncOpenAI:
-    # Fresh client per call — avoids stale credentials after env changes
     return AsyncOpenAI(
         api_key=settings.azure_openai_key,
         base_url=settings.azure_openai_base_url,
@@ -16,24 +15,38 @@ def _get_client() -> AsyncOpenAI:
 
 
 def _extract_json(text: str) -> dict:
-    """Parse JSON from model response, handling markdown code blocks gracefully."""
     if not text:
         raise ValueError("Model returned empty content")
-
-    # Strip markdown code fences if present (```json ... ```)
     clean = re.sub(r"^```(?:json)?\s*|\s*```$", "", text.strip(), flags=re.MULTILINE)
-
     try:
         return json.loads(clean)
     except json.JSONDecodeError:
-        # Last resort: grab the first {...} block
         match = re.search(r"\{.*\}", clean, re.DOTALL)
         if match:
             return json.loads(match.group())
         raise ValueError(f"Could not parse JSON from model response: {text[:200]}")
 
 
-async def analyze_document(image_bytes: bytes, content_type: str) -> tuple[dict, dict]:
+def _parse_fields(raw: dict) -> tuple[dict, dict]:
+    """
+    Split the model's extracted_fields into:
+      - flat_fields: {field_name: value_string}  (for display table)
+      - annotations: {field_name: {value, bbox}}  (for image overlay)
+    Handles both old format (str values) and new format ({value, bbox} objects).
+    """
+    flat: dict = {}
+    ann: dict = {}
+    for key, val in raw.items():
+        if isinstance(val, dict) and "value" in val:
+            flat[key] = str(val["value"])
+            ann[key] = {"value": str(val["value"]), "bbox": val.get("bbox")}
+        else:
+            flat[key] = str(val)
+            ann[key] = {"value": str(val), "bbox": None}
+    return flat, ann
+
+
+async def analyze_document(image_bytes: bytes, content_type: str) -> tuple[dict, dict, dict]:
     client = _get_client()
     mime = content_type if content_type in ("image/jpeg", "image/png") else "image/jpeg"
     b64 = base64.b64encode(image_bytes).decode()
@@ -48,13 +61,19 @@ async def analyze_document(image_bytes: bytes, content_type: str) -> tuple[dict,
                         "type": "text",
                         "text": (
                             "You are a document extraction expert. Analyze this document image "
-                            "and extract all relevant information. Identify the document type "
-                            "(ID card, passport, invoice, receipt, driver's license, etc.) and "
-                            "extract every visible field. Return ONLY a valid JSON object with "
-                            "three keys: 'document_type' (string), 'extracted_fields' (object "
-                            "with key-value pairs for every field visible), and 'confidence' "
-                            "('high', 'medium', or 'low' based on image clarity and extraction "
-                            "certainty). Do not include markdown or explanation."
+                            "and extract all visible information.\n\n"
+                            "Return ONLY a valid JSON object with exactly three keys:\n"
+                            "1. 'document_type': string (e.g. 'National ID Card', 'Passport', 'Invoice')\n"
+                            "2. 'confidence': 'high', 'medium', or 'low'\n"
+                            "3. 'extracted_fields': object where each key is a field name and "
+                            "each value is an object with:\n"
+                            "   - 'value': the extracted text string\n"
+                            "   - 'bbox': [x1, y1, x2, y2] as decimal fractions (0.0 to 1.0) "
+                            "of image width/height indicating where this field appears. "
+                            "x1,y1 = top-left corner; x2,y2 = bottom-right corner.\n\n"
+                            "Example:\n"
+                            "  \"full_name\": {\"value\": \"Juan Pérez\", \"bbox\": [0.10, 0.22, 0.65, 0.30]}\n\n"
+                            "Extract every visible field. Do not include markdown or explanation."
                         ),
                     },
                     {
@@ -64,7 +83,7 @@ async def analyze_document(image_bytes: bytes, content_type: str) -> tuple[dict,
                 ],
             }
         ],
-        max_tokens=1000,
+        max_tokens=1500,
     )
 
     content = response.choices[0].message.content
@@ -82,4 +101,6 @@ async def analyze_document(image_bytes: bytes, content_type: str) -> tuple[dict,
         "total_tokens": response.usage.total_tokens,
     }
 
-    return _extract_json(content), usage
+    parsed = _extract_json(content)
+    flat_fields, annotations = _parse_fields(parsed.get("extracted_fields", {}))
+    return parsed, flat_fields, annotations, usage

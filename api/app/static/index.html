@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blackpool Assessment</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0d1117;
+      --surface:  #161b22;
+      --surface2: #21262d;
+      --border:   #30363d;
+      --accent:   #58a6ff;
+      --text:     #e6edf3;
+      --text2:    #8b949e;
+      --green:    #3fb950;
+      --red:      #f85149;
+      --yellow:   #d29922;
+      --radius:   10px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ─────────────────────────────────────── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 60px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 20px; gap: 16px;
+    }
+
+    .hamburger {
+      background: none; border: none; cursor: pointer;
+      display: flex; flex-direction: column; gap: 5px; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--text); border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .site-title {
+      font-size: 1.1rem; font-weight: 600; color: var(--text);
+      letter-spacing: 0.3px;
+    }
+    .site-title span { color: var(--accent); }
+
+    .header-badge {
+      margin-left: auto;
+      font-size: 0.7rem; color: var(--text2);
+      background: var(--surface2); border: 1px solid var(--border);
+      padding: 3px 10px; border-radius: 20px;
+    }
+
+    /* ── Sidebar overlay ─────────────────────────────── */
+    .overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(2px);
+    }
+    .overlay.open { display: block; }
+
+    .sidebar {
+      position: fixed; top: 0; left: -300px; bottom: 0; z-index: 201;
+      width: 270px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      transition: left 0.28s cubic-bezier(.4,0,.2,1);
+      display: flex; flex-direction: column;
+    }
+    .sidebar.open { left: 0; }
+
+    .sidebar-header {
+      height: 60px; display: flex; align-items: center;
+      padding: 0 20px; gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header .close-btn {
+      background: none; border: none; color: var(--text2);
+      font-size: 1.4rem; cursor: pointer; margin-left: auto;
+      line-height: 1;
+    }
+    .sidebar-header .close-btn:hover { color: var(--text); }
+
+    .sidebar-logo {
+      font-size: 1rem; font-weight: 700; color: var(--text);
+    }
+    .sidebar-logo span { color: var(--accent); }
+
+    nav { padding: 16px 12px; flex: 1; }
+
+    .nav-label {
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text2);
+      padding: 0 10px; margin: 8px 0 4px;
+    }
+
+    nav a {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 8px;
+      color: var(--text2); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500;
+      transition: background 0.15s, color 0.15s;
+      cursor: pointer; margin-bottom: 2px;
+    }
+    nav a:hover { background: var(--surface2); color: var(--text); }
+    nav a.active { background: rgba(88,166,255,0.12); color: var(--accent); }
+
+    nav a .icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+      background: var(--surface2);
+    }
+    nav a.active .icon { background: rgba(88,166,255,0.18); }
+
+    .sidebar-footer {
+      padding: 16px; border-top: 1px solid var(--border);
+      font-size: 0.75rem; color: var(--text2); text-align: center;
+    }
+
+    /* ── Main content ────────────────────────────────── */
+    main {
+      padding-top: 60px; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .panel {
+      display: none; width: 100%; max-width: 720px;
+      padding: 40px 24px 60px;
+      animation: fadeUp 0.3s ease;
+    }
+    .panel.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-header { margin-bottom: 28px; }
+    .panel-header h1 {
+      font-size: 1.5rem; font-weight: 700; margin-bottom: 6px;
+    }
+    .panel-header p { color: var(--text2); font-size: 0.9rem; line-height: 1.5; }
+
+    /* ── Card ────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 0.8rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text2); margin-bottom: 16px;
+    }
+
+    /* ── Form elements ───────────────────────────────── */
+    label { display: block; font-size: 0.85rem; color: var(--text2); margin-bottom: 6px; }
+
+    textarea, select, input[type="text"] {
+      width: 100%; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); font-size: 0.9rem; padding: 12px 14px;
+      outline: none; resize: vertical;
+      transition: border-color 0.15s;
+      font-family: inherit;
+    }
+    textarea:focus, select:focus, input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+    select { cursor: pointer; }
+    textarea { min-height: 120px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
+
+    /* ── Upload zone ─────────────────────────────────── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 36px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--accent);
+      background: rgba(88,166,255,0.04);
+    }
+    .upload-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-icon { font-size: 2rem; margin-bottom: 10px; }
+    .upload-zone p { color: var(--text2); font-size: 0.88rem; }
+    .upload-zone .file-name {
+      color: var(--accent); font-weight: 500; margin-top: 8px; font-size: 0.88rem;
+    }
+
+    /* ── Image preview ───────────────────────────────── */
+    .img-preview {
+      margin-top: 16px; display: none; border-radius: 8px;
+      overflow: hidden; border: 1px solid var(--border);
+      background: var(--surface2); position: relative; cursor: zoom-in;
+    }
+    .img-preview img { width: 100%; display: block; object-fit: contain; }
+    .img-preview canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
+    }
+    .zoom-hint {
+      position: absolute; bottom: 8px; right: 10px;
+      font-size: 0.72rem; color: rgba(255,255,255,0.6);
+      background: rgba(0,0,0,0.5); padding: 3px 8px; border-radius: 4px;
+    }
+
+    /* ── Lightbox ─────────────────────────────────────── */
+    .lightbox {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.92); align-items: center; justify-content: center;
+      cursor: zoom-out; padding: 56px 32px 32px;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-inner {
+      position: relative;
+      width: clamp(300px, 88vw, 1100px); /* force a real width so img fills it */
+      line-height: 0;
+    }
+    .lightbox-inner img {
+      display: block;
+      width: 100%;          /* fill the inner width */
+      height: auto;         /* natural aspect ratio — no letterboxing */
+      max-height: 80vh;     /* prevent overflow on very tall images */
+      border-radius: 8px;
+    }
+    .lightbox-inner canvas {
+      position: absolute; top: 0; left: 0; pointer-events: none;
+      border-radius: 8px;
+    }
+    .lightbox-close {
+      position: absolute; top: -40px; right: 0;
+      background: none; border: none; color: #fff; font-size: 1.8rem;
+      cursor: pointer; line-height: 1;
+    }
+
+    /* ── Annotated table ──────────────────────────────── */
+    .fields-table tr { cursor: pointer; transition: background 0.15s; }
+    .fields-table tr:hover td { background: rgba(88,166,255,0.07); }
+    .fields-table tr.ann-highlight td { background: rgba(88,166,255,0.15); }
+    .color-dot {
+      display: inline-block; width: 10px; height: 10px;
+      border-radius: 50%; margin-right: 8px; vertical-align: middle; flex-shrink: 0;
+    }
+
+    /* ── Buttons ─────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 24px; border-radius: 8px;
+      font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; border: none;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-primary {
+      background: var(--accent); color: #0d1117;
+    }
+    .btn-primary:hover:not(:disabled) { opacity: 0.88; }
+
+    .btn-ghost {
+      background: var(--surface2); color: var(--text2);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover:not(:disabled) { color: var(--text); }
+
+    .btn-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+
+    /* ── Spinner ─────────────────────────────────────── */
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid rgba(13,17,23,0.3);
+      border-top-color: #0d1117; border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Results area ────────────────────────────────── */
+    .results { display: none; margin-top: 24px; }
+    .results.visible { display: block; animation: fadeUp 0.3s ease; }
+
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .result-card-header {
+      padding: 12px 18px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.78rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text2);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .result-card-body { padding: 18px; }
+
+    /* transcript text */
+    .transcript-text {
+      font-size: 1rem; line-height: 1.7; color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    /* badges row */
+    .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .badge {
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 0.75rem; font-weight: 600;
+    }
+    .badge-blue { background: rgba(88,166,255,0.15); color: var(--accent); }
+    .badge-green { background: rgba(63,185,80,0.15); color: var(--green); }
+    .badge-yellow { background: rgba(210,153,34,0.15); color: var(--yellow); }
+    .badge-red { background: rgba(248,81,73,0.15); color: var(--red); }
+
+    /* speakers */
+    .speakers { display: flex; flex-direction: column; gap: 10px; }
+    .speaker-item {
+      background: var(--surface2); border-radius: 8px;
+      padding: 12px 16px;
+    }
+    .speaker-label {
+      font-size: 0.75rem; font-weight: 600; color: var(--accent);
+      margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .speaker-text { font-size: 0.9rem; line-height: 1.5; color: var(--text); }
+    .speaker-time { font-size: 0.72rem; color: var(--text2); margin-top: 4px; }
+
+    /* fields table */
+    .fields-table { width: 100%; border-collapse: collapse; }
+    .fields-table tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+    .fields-table td { padding: 10px 14px; font-size: 0.88rem; }
+    .fields-table td:first-child { color: var(--text2); width: 40%; font-weight: 500; }
+    .fields-table td:last-child { color: var(--text); word-break: break-word; }
+
+    /* audio player */
+    .audio-player {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px;
+    }
+    audio { width: 100%; margin-bottom: 12px; }
+    audio::-webkit-media-controls-panel { background: var(--surface2); }
+
+    /* JSON viewer */
+    .json-toggle {
+      background: none; border: none; color: var(--text2);
+      font-size: 0.8rem; cursor: pointer; padding: 0;
+      text-decoration: underline; text-underline-offset: 3px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .json-toggle:hover { color: var(--text); }
+    .json-block {
+      display: none; margin-top: 12px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px;
+      font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+      font-size: 0.8rem; color: #79c0ff;
+      overflow-x: auto; white-space: pre;
+      line-height: 1.6;
+    }
+
+    /* status dot */
+    .status-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      display: inline-block; flex-shrink: 0;
+    }
+    .status-dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .status-dot.red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+    /* health display */
+    .health-display {
+      display: flex; align-items: center; gap: 16px;
+      padding: 20px; background: var(--surface2);
+      border-radius: 8px;
+    }
+    .health-status { font-size: 1.1rem; font-weight: 600; }
+    .health-version { font-size: 0.82rem; color: var(--text2); margin-top: 4px; }
+
+    /* error box */
+    .error-box {
+      background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.4);
+      border-radius: 8px; padding: 14px 18px;
+      color: var(--red); font-size: 0.88rem; line-height: 1.5;
+    }
+
+    /* divider */
+    .divider {
+      height: 1px; background: var(--border);
+      margin: 16px 0;
+    }
+
+    /* ── Database logs table ──────────────────────────── */
+    .logs-table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
+    .logs-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; min-width: 820px; }
+    .logs-table th {
+      background: var(--surface2); color: var(--text2);
+      font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; padding: 10px 14px; text-align: left;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    .logs-table td {
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      color: var(--text); vertical-align: top; word-break: break-all;
+      max-width: 220px;
+    }
+    .logs-table tr:last-child td { border-bottom: none; }
+    .logs-table tr:hover td { background: rgba(88,166,255,0.05); }
+    .logs-table .mono { font-family: monospace; font-size: 0.75rem; color: var(--text2); }
+    .status-pill {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 0.72rem; font-weight: 600; white-space: nowrap;
+    }
+    .status-2xx { background: rgba(63,185,80,0.15); color: var(--green); }
+    .status-4xx { background: rgba(210,153,34,0.15); color: var(--yellow); }
+    .status-5xx { background: rgba(248,81,73,0.15); color: var(--red); }
+    .endpoint-tag {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 0.72rem; font-weight: 600; white-space: nowrap;
+      background: rgba(88,166,255,0.12); color: var(--accent);
+    }
+    .db-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 12px; margin-bottom: 20px; }
+    .db-stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px;
+    }
+    .db-stat-label { font-size: 0.72rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .db-stat-value { font-size: 1.4rem; font-weight: 700; color: var(--text); }
+    .db-stat-sub { font-size: 0.72rem; color: var(--text2); margin-top: 2px; }
+
+    /* Language detection banner */
+    .lang-banner {
+      display: none; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 8px; margin-bottom: 14px;
+      font-size: 0.85rem; font-weight: 500;
+      animation: fadeUp 0.25s ease;
+    }
+    .lang-banner.detected {
+      display: flex;
+      background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.3);
+      color: var(--accent);
+    }
+    .lang-banner.unsupported {
+      display: flex;
+      background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3);
+      color: var(--red);
+    }
+    .lang-banner.detecting {
+      display: flex;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text2);
+    }
+    .lang-flag { font-size: 1.2rem; }
+
+    /* API key bar at top of page */
+    .api-key-bar {
+      width: 100%; max-width: 720px;
+      padding: 12px 24px 0;
+    }
+    .api-key-inner {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .api-key-inner label { margin: 0; font-size: 0.8rem; white-space: nowrap; }
+    .api-key-inner input {
+      flex: 1; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text2); font-size: 0.8rem; padding: 6px 10px;
+      font-family: monospace;
+    }
+    .api-key-inner input:focus { color: var(--text); border-color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────── -->
+<header>
+  <button class="hamburger" onclick="openSidebar()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <span class="site-title"><span>Blackpool</span> Assessment</span>
+  <span class="header-badge">AI Services API</span>
+</header>
+
+<!-- ── Sidebar overlay ─────────────────────────────────── -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-logo"><span>Blackpool</span> Assessment</span>
+    <button class="close-btn" onclick="closeSidebar()">×</button>
+  </div>
+  <nav>
+    <div class="nav-label">AI Services</div>
+    <a onclick="showPanel('stt')" id="nav-stt" class="active">
+      <span class="icon">🎙️</span> Speech-to-Text
+    </a>
+    <a onclick="showPanel('tts')" id="nav-tts">
+      <span class="icon">🔊</span> Text-to-Speech
+    </a>
+    <a onclick="showPanel('idp')" id="nav-idp">
+      <span class="icon">📄</span> Document Analysis
+    </a>
+    <div class="nav-label" style="margin-top:16px;">System</div>
+    <a onclick="showPanel('health')" id="nav-health">
+      <span class="icon">💚</span> Health Check
+    </a>
+    <a onclick="showPanel('db')" id="nav-db">
+      <span class="icon">🗄️</span> Database
+    </a>
+  </nav>
+  <div class="sidebar-footer">Powered by Deepgram &amp; OpenAI</div>
+</aside>
+
+<!-- ── Main ──────────────────────────────────────────────── -->
+<main>
+
+  <!-- API key bar (global) -->
+  <div class="api-key-bar">
+    <div class="api-key-inner">
+      <label for="globalApiKey">🔑 API Key</label>
+      <input type="text" id="globalApiKey" value="blackpool-architect-key-2024" />
+    </div>
+  </div>
+
+  <!-- ── STT Panel ── -->
+  <div class="panel active" id="panel-stt">
+    <div class="panel-header">
+      <h1>🎙️ Speech-to-Text</h1>
+      <p>Upload an MP3 or WAV audio file. Deepgram Nova-2 will transcribe it with speaker diarization and language detection.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Audio File</div>
+      <div class="upload-zone" id="stt-zone">
+        <input type="file" id="stt-file" accept=".mp3,.wav,audio/mpeg,audio/wav" onchange="onSTTFile(this)" />
+        <div class="upload-icon">🎵</div>
+        <p>Drag & drop or click to upload</p>
+        <p style="font-size:0.78rem;margin-top:4px;color:var(--text2)">MP3 or WAV · max 25 MB</p>
+        <div class="file-name" id="stt-fname"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="stt-btn" onclick="runSTT()" disabled>
+          Transcribe Audio
+        </button>
+      </div>
+    </div>
+
+    <div class="results" id="stt-results">
+      <div class="result-card" id="stt-error-card" style="display:none">
+        <div class="result-card-header">⚠️ Error</div>
+        <div class="result-card-body"><div class="error-box" id="stt-error-msg"></div></div>
+      </div>
+
+      <div class="result-card" id="stt-main-card">
+        <div class="result-card-header">📊 Analysis Results</div>
+        <div class="result-card-body">
+          <div id="stt-badges"></div>
+          <div class="card-title" style="margin-bottom:8px">📝 Full Transcript</div>
+          <div class="transcript-text" id="stt-transcript"></div>
+        </div>
+      </div>
+
+      <div class="result-card" id="stt-speakers-card" style="display:none">
+        <div class="result-card-header">👥 Speaker Segments</div>
+        <div class="result-card-body">
+          <div class="speakers" id="stt-speakers"></div>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <div class="result-card-header" style="justify-content:space-between">
+          <span>{ } Raw JSON</span>
+          <button class="json-toggle" onclick="toggleJson('stt-json', this)">Show JSON ▾</button>
+        </div>
+        <div class="result-card-body" style="padding-top:8px">
+          <pre class="json-block" id="stt-json"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TTS Panel ── -->
+  <div class="panel" id="panel-tts">
+    <div class="panel-header">
+      <h1>🔊 Text-to-Speech</h1>
+      <p>Type your text below and choose a voice. Deepgram Aura will synthesize it into an MP3 you can play and download.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Input</div>
+      <div style="margin-bottom:16px">
+        <label for="tts-text">Text to synthesize</label>
+        <textarea id="tts-text" placeholder="Type or paste your text here…" rows="5"></textarea>
+        <div style="text-align:right;font-size:0.75rem;color:var(--text2);margin-top:4px">
+          <span id="tts-char-count">0</span> / 2000 characters
+        </div>
+      </div>
+
+      <!-- Language detection banner -->
+      <div class="lang-banner detecting" id="lang-banner" style="display:none">
+        <span class="lang-flag" id="lang-flag"></span>
+        <span id="lang-banner-text"></span>
+      </div>
+
+      <div id="voice-section">
+        <label for="tts-voice">Voice</label>
+        <select id="tts-voice"></select>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="tts-btn" onclick="runTTS()">
+          Synthesize Speech
+        </button>
+      </div>
+    </div>
+
+    <div class="results" id="tts-results">
+      <div class="result-card" id="tts-error-card" style="display:none">
+        <div class="result-card-header">⚠️ Error</div>
+        <div class="result-card-body"><div class="error-box" id="tts-error-msg"></div></div>
+      </div>
+
+      <div class="result-card" id="tts-main-card" style="display:none">
+        <div class="result-card-header">🎧 Generated Audio</div>
+        <div class="result-card-body">
+          <div class="audio-player">
+            <audio id="tts-audio" controls></audio>
+            <div class="btn-row" style="margin-top:0">
+              <a id="tts-download" class="btn btn-ghost" download="speech.mp3">⬇ Download MP3</a>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="badges" id="tts-badges"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── IDP Panel ── -->
+  <div class="panel" id="panel-idp">
+    <div class="panel-header">
+      <h1>📄 Document Analysis</h1>
+      <p>Upload a JPG or PNG image of any document — ID card, passport, invoice, receipt. GPT-4o will extract all visible fields.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Document Image</div>
+      <div class="upload-zone" id="idp-zone">
+        <input type="file" id="idp-file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" onchange="onIDPFile(this)" />
+        <div class="upload-icon">🖼️</div>
+        <p>Drag & drop or click to upload</p>
+        <p style="font-size:0.78rem;margin-top:4px;color:var(--text2)">JPG or PNG · max 10 MB</p>
+        <div class="file-name" id="idp-fname"></div>
+      </div>
+      <div class="img-preview" id="idp-preview" onclick="openLightbox()">
+        <img id="idp-img" src="" alt="Document preview" />
+        <canvas id="idp-canvas"></canvas>
+        <span class="zoom-hint">🔍 Click to zoom</span>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="idp-btn" onclick="runIDP()" disabled>
+          Analyze Document
+        </button>
+      </div>
+    </div>
+
+    <div class="results" id="idp-results">
+      <div class="result-card" id="idp-error-card" style="display:none">
+        <div class="result-card-header">⚠️ Error</div>
+        <div class="result-card-body"><div class="error-box" id="idp-error-msg"></div></div>
+      </div>
+
+      <div class="result-card" id="idp-main-card" style="display:none">
+        <div class="result-card-header">🔍 Extracted Information</div>
+        <div class="result-card-body">
+          <div class="badges" id="idp-badges"></div>
+          <table class="fields-table" id="idp-table"></table>
+        </div>
+      </div>
+
+      <div class="result-card" id="idp-json-card" style="display:none">
+        <div class="result-card-header" style="justify-content:space-between">
+          <span>{ } Raw JSON</span>
+          <button class="json-toggle" onclick="toggleJson('idp-json', this)">Show JSON ▾</button>
+        </div>
+        <div class="result-card-body" style="padding-top:8px">
+          <pre class="json-block" id="idp-json"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Database Panel ── -->
+  <div class="panel" id="panel-db">
+    <div class="panel-header">
+      <h1>🗄️ Database</h1>
+      <p>Live view of all API requests tracked in PostgreSQL — every field required by the assessment.</p>
+    </div>
+
+    <div class="db-stats" id="db-stats"></div>
+
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)">
+        <span class="card-title" style="margin:0">Request Log</span>
+        <button class="btn btn-primary" style="padding:7px 16px;font-size:0.82rem" onclick="loadLogs()">↻ Refresh</button>
+      </div>
+      <div class="logs-table-wrap">
+        <table class="logs-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Timestamp</th>
+              <th>Endpoint</th>
+              <th>Input</th>
+              <th>Output / Reference</th>
+              <th>External Usage</th>
+              <th>Latency</th>
+              <th>HTTP</th>
+            </tr>
+          </thead>
+          <tbody id="logs-tbody">
+            <tr><td colspan="8" style="text-align:center;color:var(--text2);padding:32px">Click Refresh to load logs</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Health Panel ── -->
+  <div class="panel" id="panel-health">
+    <div class="panel-header">
+      <h1>💚 Health Check</h1>
+      <p>Verify the API service is running and reachable.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Service Status</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="runHealth()">Check Status</button>
+      </div>
+    </div>
+
+    <div class="results" id="health-results">
+      <div class="result-card">
+        <div class="result-card-header">📡 API Response</div>
+        <div class="result-card-body">
+          <div class="health-display" id="health-display">
+            <div class="status-dot" id="health-dot"></div>
+            <div>
+              <div class="health-status" id="health-status-text"></div>
+              <div class="health-version" id="health-version-text"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-inner" onclick="event.stopPropagation()">
+    <button class="lightbox-close" onclick="closeLightbox()">×</button>
+    <img id="lightbox-img" src="" alt="Document zoomed" />
+    <canvas id="lightbox-canvas"></canvas>
+  </div>
+</div>
+
+<script>
+  // ── Sidebar ──────────────────────────────────────────────
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('overlay').classList.add('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+
+  // ── Panel navigation ─────────────────────────────────────
+  function showPanel(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    document.getElementById('nav-' + name).classList.add('active');
+    closeSidebar();
+  }
+
+  // ── API key helper ───────────────────────────────────────
+  function apiKey() {
+    return document.getElementById('globalApiKey').value.trim();
+  }
+
+  // ── JSON toggle ──────────────────────────────────────────
+  function toggleJson(id, btn) {
+    const block = document.getElementById(id);
+    const showing = block.style.display === 'block';
+    block.style.display = showing ? 'none' : 'block';
+    btn.textContent = showing ? 'Show JSON ▾' : 'Hide JSON ▴';
+  }
+
+  // ── Loading state helpers ────────────────────────────────
+  function setLoading(btnId, loading, defaultLabel) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.innerHTML = loading
+      ? `<span class="spinner"></span> Processing…`
+      : defaultLabel;
+  }
+
+  // ── STT ─────────────────────────────────────────────────
+  function onSTTFile(input) {
+    const f = input.files[0];
+    document.getElementById('stt-fname').textContent = f ? f.name : '';
+    document.getElementById('stt-btn').disabled = !f;
+    document.getElementById('stt-results').classList.remove('visible');
+  }
+
+  async function runSTT() {
+    const fileInput = document.getElementById('stt-file');
+    if (!fileInput.files[0]) return;
+    setLoading('stt-btn', true, 'Transcribe Audio');
+    document.getElementById('stt-results').classList.remove('visible');
+
+    const form = new FormData();
+    form.append('audio', fileInput.files[0]);
+
+    try {
+      const res = await fetch('/stt', {
+        method: 'POST',
+        headers: { 'X-API-Key': apiKey() },
+        body: form,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || res.statusText);
+      renderSTT(data);
+    } catch (e) {
+      showSTTError(e.message);
+    } finally {
+      setLoading('stt-btn', false, 'Transcribe Audio');
+    }
+  }
+
+  // Language code → readable name
+  const LANG_NAMES = {
+    en: 'English', es: 'Spanish', fr: 'French', de: 'German',
+    pt: 'Portuguese', it: 'Italian', zh: 'Chinese', ja: 'Japanese',
+    ko: 'Korean', ar: 'Arabic', ru: 'Russian', nl: 'Dutch',
+  };
+
+  function renderSTT(data) {
+    document.getElementById('stt-error-card').style.display = 'none';
+    document.getElementById('stt-main-card').style.display = 'block';
+
+    const langCode = (data.language || 'unknown').toLowerCase();
+    const langName = LANG_NAMES[langCode] ? `${LANG_NAMES[langCode]} (${langCode})` : langCode;
+    const dur = (data.duration || 0).toFixed(2);
+    const spCount = (data.speakers || []).length;
+
+    // Explicit labeled fields instead of plain badges
+    document.getElementById('stt-badges').innerHTML = `
+      <table class="fields-table" style="margin-bottom:16px">
+        <tr>
+          <td>🌐 Detected Language</td>
+          <td><span class="badge badge-blue">${langName}</span></td>
+        </tr>
+        <tr>
+          <td>⏱ Audio Duration</td>
+          <td><span class="badge badge-green">${dur} seconds</span></td>
+        </tr>
+        <tr>
+          <td>👥 Speakers Detected</td>
+          <td><span class="badge badge-yellow">${spCount} speaker${spCount !== 1 ? 's' : ''}</span></td>
+        </tr>
+      </table>
+    `;
+
+    document.getElementById('stt-transcript').textContent = data.transcript || '(no transcript)';
+
+    // Always show speaker segments
+    const sc = document.getElementById('stt-speakers-card');
+    const sp = document.getElementById('stt-speakers');
+    sp.innerHTML = '';
+    if (data.speakers && data.speakers.length > 0) {
+      sc.style.display = 'block';
+      data.speakers.forEach(s => {
+        sp.innerHTML += `
+          <div class="speaker-item">
+            <div class="speaker-label">Speaker ${s.speaker}</div>
+            <div class="speaker-text">${s.text}</div>
+            <div class="speaker-time">Start: ${s.start.toFixed(2)}s &nbsp;→&nbsp; End: ${s.end.toFixed(2)}s</div>
+          </div>`;
+      });
+    } else {
+      sc.style.display = 'none';
+    }
+
+    document.getElementById('stt-json').textContent = JSON.stringify(data, null, 2);
+    document.getElementById('stt-results').classList.add('visible');
+  }
+
+  function showSTTError(msg) {
+    document.getElementById('stt-error-card').style.display = 'block';
+    document.getElementById('stt-main-card').style.display = 'none';
+    document.getElementById('stt-speakers-card').style.display = 'none';
+    document.getElementById('stt-error-msg').textContent = msg;
+    document.getElementById('stt-results').classList.add('visible');
+  }
+
+  // ── TTS voice data ───────────────────────────────────────
+  const VOICE_DATA = {
+    en: {
+      flag: '🇺🇸', name: 'English',
+      groups: [
+        { label: '🇺🇸 English (American)', voices: [
+          { v: 'aura-2-asteria-en', l: 'Asteria (Female)' },
+          { v: 'aura-2-thalia-en',  l: 'Thalia (Female)' },
+          { v: 'aura-2-andromeda-en', l: 'Andromeda (Female)' },
+          { v: 'aura-2-helena-en',  l: 'Helena (Female)' },
+          { v: 'aura-2-aurora-en',  l: 'Aurora (Female)' },
+          { v: 'aura-2-callista-en',l: 'Callista (Female)' },
+          { v: 'aura-2-cora-en',    l: 'Cora (Female)' },
+          { v: 'aura-2-luna-en',    l: 'Luna (Female)' },
+          { v: 'aura-2-hera-en',    l: 'Hera (Female)' },
+          { v: 'aura-2-iris-en',    l: 'Iris (Female)' },
+          { v: 'aura-2-juno-en',    l: 'Juno (Female)' },
+          { v: 'aura-2-minerva-en', l: 'Minerva (Female)' },
+          { v: 'aura-2-ophelia-en', l: 'Ophelia (Female)' },
+          { v: 'aura-2-phoebe-en',  l: 'Phoebe (Female)' },
+          { v: 'aura-2-vesta-en',   l: 'Vesta (Female)' },
+          { v: 'aura-2-apollo-en',  l: 'Apollo (Male)' },
+          { v: 'aura-2-arcas-en',   l: 'Arcas (Male)' },
+          { v: 'aura-2-aries-en',   l: 'Aries (Male)' },
+          { v: 'aura-2-atlas-en',   l: 'Atlas (Male)' },
+          { v: 'aura-2-hermes-en',  l: 'Hermes (Male)' },
+          { v: 'aura-2-jupiter-en', l: 'Jupiter (Male)' },
+          { v: 'aura-2-mars-en',    l: 'Mars (Male)' },
+          { v: 'aura-2-neptune-en', l: 'Neptune (Male)' },
+          { v: 'aura-2-odysseus-en',l: 'Odysseus (Male)' },
+          { v: 'aura-2-orion-en',   l: 'Orion (Male)' },
+          { v: 'aura-2-orpheus-en', l: 'Orpheus (Male)' },
+          { v: 'aura-2-pluto-en',   l: 'Pluto (Male)' },
+          { v: 'aura-2-saturn-en',  l: 'Saturn (Male)' },
+          { v: 'aura-2-zeus-en',    l: 'Zeus (Male)' },
+        ]},
+        { label: '🇬🇧 English (British)', voices: [
+          { v: 'aura-2-pandora-en', l: 'Pandora (Female)' },
+          { v: 'aura-2-draco-en',   l: 'Draco (Male)' },
+        ]},
+        { label: '🇦🇺 English (Australian)', voices: [
+          { v: 'aura-2-theia-en',    l: 'Theia (Female)' },
+          { v: 'aura-2-hyperion-en', l: 'Hyperion (Male)' },
+        ]},
+        { label: '🇵🇭 English (Filipino)', voices: [
+          { v: 'aura-2-amalthea-en', l: 'Amalthea (Female)' },
+        ]},
+        { label: '── Aura-1 Legacy ──', voices: [
+          { v: 'aura-asteria-en', l: 'Asteria v1 (Female · American)' },
+          { v: 'aura-orion-en',   l: 'Orion v1 (Male · American)' },
+          { v: 'aura-athena-en',  l: 'Athena v1 (Female · British)' },
+          { v: 'aura-helios-en',  l: 'Helios v1 (Male · British)' },
+          { v: 'aura-angus-en',   l: 'Angus v1 (Male · Irish)' },
+        ]},
+      ]
+    },
+    es: {
+      flag: '🇪🇸', name: 'Spanish',
+      groups: [{ label: '🇪🇸 Spanish', voices: [
+        { v: 'aura-2-celeste-es',  l: 'Celeste (Female · Colombian)' },
+        { v: 'aura-2-estrella-es', l: 'Estrella (Female · Mexican)' },
+        { v: 'aura-2-carina-es',   l: 'Carina (Female · Peninsular)' },
+        { v: 'aura-2-diana-es',    l: 'Diana (Female · Peninsular)' },
+        { v: 'aura-2-agustina-es', l: 'Agustina (Female · Peninsular)' },
+        { v: 'aura-2-antonia-es',  l: 'Antonia (Female · Argentine)' },
+        { v: 'aura-2-gloria-es',   l: 'Gloria (Female · Colombian)' },
+        { v: 'aura-2-olivia-es',   l: 'Olivia (Female · Mexican)' },
+        { v: 'aura-2-selena-es',   l: 'Selena (Female · Latin American)' },
+        { v: 'aura-2-silvia-es',   l: 'Silvia (Female · Peninsular)' },
+        { v: 'aura-2-nestor-es',   l: 'Néstor (Male · Peninsular)' },
+        { v: 'aura-2-sirio-es',    l: 'Sirio (Male · Mexican)' },
+        { v: 'aura-2-alvaro-es',   l: 'Álvaro (Male · Peninsular)' },
+        { v: 'aura-2-aquila-es',   l: 'Aquila (Male · Latin American)' },
+        { v: 'aura-2-javier-es',   l: 'Javier (Male · Mexican)' },
+        { v: 'aura-2-luciano-es',  l: 'Luciano (Male · Mexican)' },
+        { v: 'aura-2-valerio-es',  l: 'Valerio (Male · Mexican)' },
+      ]}]
+    },
+    fr: {
+      flag: '🇫🇷', name: 'French',
+      groups: [{ label: '🇫🇷 French', voices: [
+        { v: 'aura-2-agathe-fr', l: 'Agathe (Female)' },
+        { v: 'aura-2-hector-fr', l: 'Hector (Male)' },
+      ]}]
+    },
+    de: {
+      flag: '🇩🇪', name: 'German',
+      groups: [{ label: '🇩🇪 German', voices: [
+        { v: 'aura-2-viktoria-de', l: 'Viktoria (Female)' },
+        { v: 'aura-2-elara-de',   l: 'Elara (Female)' },
+        { v: 'aura-2-aurelia-de', l: 'Aurelia (Female)' },
+        { v: 'aura-2-lara-de',    l: 'Lara (Female)' },
+        { v: 'aura-2-kara-de',    l: 'Kara (Female)' },
+        { v: 'aura-2-julius-de',  l: 'Julius (Male)' },
+        { v: 'aura-2-fabian-de',  l: 'Fabian (Male)' },
+      ]}]
+    },
+    nl: {
+      flag: '🇳🇱', name: 'Dutch',
+      groups: [{ label: '🇳🇱 Dutch', voices: [
+        { v: 'aura-2-rhea-nl',     l: 'Rhea (Female)' },
+        { v: 'aura-2-beatrix-nl',  l: 'Beatrix (Female)' },
+        { v: 'aura-2-daphne-nl',   l: 'Daphne (Female)' },
+        { v: 'aura-2-cornelia-nl', l: 'Cornelia (Female)' },
+        { v: 'aura-2-hestia-nl',   l: 'Hestia (Female)' },
+        { v: 'aura-2-leda-nl',     l: 'Leda (Female)' },
+        { v: 'aura-2-sander-nl',   l: 'Sander (Male)' },
+        { v: 'aura-2-lars-nl',     l: 'Lars (Male)' },
+        { v: 'aura-2-roman-nl',    l: 'Roman (Male)' },
+      ]}]
+    },
+    it: {
+      flag: '🇮🇹', name: 'Italian',
+      groups: [{ label: '🇮🇹 Italian', voices: [
+        { v: 'aura-2-livia-it',    l: 'Livia (Female)' },
+        { v: 'aura-2-melia-it',    l: 'Melia (Female)' },
+        { v: 'aura-2-maia-it',     l: 'Maia (Female)' },
+        { v: 'aura-2-cinzia-it',   l: 'Cinzia (Female)' },
+        { v: 'aura-2-demetra-it',  l: 'Demetra (Female)' },
+        { v: 'aura-2-dionisio-it', l: 'Dionisio (Male)' },
+        { v: 'aura-2-elio-it',     l: 'Elio (Male)' },
+        { v: 'aura-2-flavio-it',   l: 'Flavio (Male)' },
+        { v: 'aura-2-cesare-it',   l: 'Cesare (Male)' },
+        { v: 'aura-2-perseo-it',   l: 'Perseo (Male)' },
+      ]}]
+    },
+    ja: {
+      flag: '🇯🇵', name: 'Japanese',
+      groups: [{ label: '🇯🇵 Japanese', voices: [
+        { v: 'aura-2-izanami-ja', l: 'Izanami (Female)' },
+        { v: 'aura-2-uzume-ja',   l: 'Uzume (Female)' },
+        { v: 'aura-2-ama-ja',     l: 'Ama (Female)' },
+        { v: 'aura-2-fujin-ja',   l: 'Fujin (Male)' },
+        { v: 'aura-2-ebisu-ja',   l: 'Ebisu (Male)' },
+      ]}]
+    },
+  };
+
+  // ── Language detection ───────────────────────────────────
+  function detectLang(text) {
+    if (!text || text.trim().length < 4) return null;
+    const t = text.toLowerCase();
+
+    // Script-based (100% reliable)
+    if (/[぀-ヿ一-龯]/.test(text)) return 'ja';
+
+    // Unique single characters
+    if (/[ñ¿¡]/.test(text)) return 'es';
+    if (/[ß]/.test(text)) return 'de';
+    if (/[çœæ]/.test(text)) return 'fr';
+
+    // Keyword scoring
+    const patterns = {
+      es: /\b(el|la|los|las|de|que|en|y|un|una|con|por|para|como|pero|más|este|esta|hay|ser|estar|tener|hacer|fue|era|también|cuando|todo|muy|bien|hola|gracias|cómo|qué)\b/g,
+      fr: /\b(le|la|les|de|du|des|et|en|un|une|que|qui|pour|dans|avec|sur|je|vous|nous|est|mais|pas|plus|très|faire|être|avoir|bonjour|merci|comment|quoi|aussi)\b/g,
+      de: /\b(der|die|das|den|dem|des|ein|eine|und|oder|aber|für|mit|von|bei|nach|über|unter|auf|an|in|ist|sind|war|hat|haben|werden|nicht|auch|hallo|danke|wie|was)\b/g,
+      nl: /\b(de|het|een|van|in|op|te|met|zijn|hebben|voor|dat|niet|ook|maar|er|als|aan|worden|of|bij|naar|kan|ik|je|we|ze|hij|dit|die|hallo|dank|hoe|wat)\b/g,
+      it: /\b(il|lo|la|gli|le|di|da|in|con|su|per|tra|e|che|un|una|sono|è|ma|se|io|tu|lui|lei|noi|voi|loro|ho|ha|del|della|ciao|grazie|come|cosa|anche|tutto)\b/g,
+    };
+
+    const scores = {};
+    for (const [lang, re] of Object.entries(patterns)) {
+      scores[lang] = (t.match(re) || []).length;
+    }
+
+    // Accent boosters
+    if (/[áéíóúü]/.test(text)) scores.es = (scores.es || 0) + 1;
+    if (/[àâéèêëîïôùûü]/.test(text)) scores.fr = (scores.fr || 0) + 1;
+    if (/[äöü]/.test(text)) scores.de = (scores.de || 0) + 1;
+
+    const best = Object.entries(scores).sort((a, b) => b[1] - a[1])[0];
+    if (best && best[1] >= 1) return best[0];
+    return 'en';
+  }
+
+  // ── Populate voice dropdown ──────────────────────────────
+  function buildVoiceSelect(lang) {
+    const sel = document.getElementById('tts-voice');
+    const prev = sel.value;
+    sel.innerHTML = '';
+    const data = VOICE_DATA[lang];
+    if (!data) return;
+    data.groups.forEach(g => {
+      const og = document.createElement('optgroup');
+      og.label = g.label;
+      g.voices.forEach((vx, i) => {
+        const opt = document.createElement('option');
+        opt.value = vx.v;
+        opt.textContent = vx.l;
+        if (i === 0 && !prev) opt.selected = true;
+        if (vx.v === prev) opt.selected = true;
+        og.appendChild(opt);
+      });
+      sel.appendChild(og);
+    });
+  }
+
+  // ── Update banner + dropdown based on detected lang ──────
+  function updateVoicePanel(lang) {
+    const banner = document.getElementById('lang-banner');
+    const flag   = document.getElementById('lang-flag');
+    const msg    = document.getElementById('lang-banner-text');
+    const vsec   = document.getElementById('voice-section');
+
+    if (!lang) {
+      banner.style.display = 'none';
+      vsec.style.display = 'none';
+      return;
+    }
+
+    const info = VOICE_DATA[lang];
+    if (info) {
+      const total = info.groups.reduce((n, g) => n + g.voices.length, 0);
+      banner.className = 'lang-banner detected';
+      flag.textContent = info.flag;
+      msg.textContent  = `Detected: ${info.name} — ${total} voice${total !== 1 ? 's' : ''} available`;
+      vsec.style.display = 'block';
+      buildVoiceSelect(lang);
+    } else {
+      banner.className = 'lang-banner unsupported';
+      flag.textContent = '🚫';
+      msg.textContent  = `No voices available for the detected language — try English, Spanish, French, German, Dutch, Italian, or Japanese.`;
+      vsec.style.display = 'none';
+    }
+    banner.style.display = 'flex';
+  }
+
+  // ── Debounce helper ──────────────────────────────────────
+  function debounce(fn, ms) {
+    let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+  }
+
+  // ── TTS textarea input handler ───────────────────────────
+  const onTTSInput = debounce(function(text) {
+    if (!text.trim()) {
+      document.getElementById('lang-banner').style.display = 'none';
+      document.getElementById('voice-section').style.display = 'none';
+      return;
+    }
+    // Show detecting state immediately
+    const banner = document.getElementById('lang-banner');
+    banner.className = 'lang-banner detecting';
+    document.getElementById('lang-flag').textContent = '🔍';
+    document.getElementById('lang-banner-text').textContent = 'Detecting language…';
+    banner.style.display = 'flex';
+
+    const lang = detectLang(text);
+    updateVoicePanel(lang);
+  }, 400);
+
+  // ── TTS ─────────────────────────────────────────────────
+  document.getElementById('tts-text').addEventListener('input', function() {
+    document.getElementById('tts-char-count').textContent = this.value.length;
+    onTTSInput(this.value);
+  });
+
+  async function runTTS() {
+    const text = document.getElementById('tts-text').value.trim();
+    const voice = document.getElementById('tts-voice').value;
+    if (!text) return;
+    setLoading('tts-btn', true, 'Synthesize Speech');
+    document.getElementById('tts-results').classList.remove('visible');
+    document.getElementById('tts-error-card').style.display = 'none';
+    document.getElementById('tts-main-card').style.display = 'none';
+
+    try {
+      const res = await fetch('/tts', {
+        method: 'POST',
+        headers: { 'X-API-Key': apiKey(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, voice }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: res.statusText }));
+        throw new Error(err.detail || res.statusText);
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+
+      document.getElementById('tts-audio').src = url;
+      document.getElementById('tts-download').href = url;
+      document.getElementById('tts-badges').innerHTML = `
+        <span class="badge badge-blue">🎤 ${voice}</span>
+        <span class="badge badge-green">📝 ${text.length} chars</span>
+        <span class="badge badge-yellow">🔊 ${(blob.size/1024).toFixed(1)} KB</span>
+      `;
+      document.getElementById('tts-main-card').style.display = 'block';
+      document.getElementById('tts-results').classList.add('visible');
+    } catch (e) {
+      document.getElementById('tts-error-card').style.display = 'block';
+      document.getElementById('tts-error-msg').textContent = e.message;
+      document.getElementById('tts-results').classList.add('visible');
+    } finally {
+      setLoading('tts-btn', false, 'Synthesize Speech');
+    }
+  }
+
+  // ── IDP ─────────────────────────────────────────────────
+  function onIDPFile(input) {
+    const f = input.files[0];
+    document.getElementById('idp-fname').textContent = f ? f.name : '';
+    document.getElementById('idp-btn').disabled = !f;
+    document.getElementById('idp-results').classList.remove('visible');
+
+    if (f) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('idp-img').src = e.target.result;
+        document.getElementById('idp-preview').style.display = 'block';
+      };
+      reader.readAsDataURL(f);
+    } else {
+      document.getElementById('idp-preview').style.display = 'none';
+    }
+  }
+
+  async function runIDP() {
+    const fileInput = document.getElementById('idp-file');
+    if (!fileInput.files[0]) return;
+    setLoading('idp-btn', true, 'Analyze Document');
+    document.getElementById('idp-results').classList.remove('visible');
+
+    const form = new FormData();
+    form.append('image', fileInput.files[0]);
+
+    try {
+      const res = await fetch('/idp/analyze', {
+        method: 'POST',
+        headers: { 'X-API-Key': apiKey() },
+        body: form,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || res.statusText);
+      renderIDP(data);
+    } catch (e) {
+      document.getElementById('idp-error-card').style.display = 'block';
+      document.getElementById('idp-main-card').style.display = 'none';
+      document.getElementById('idp-json-card').style.display = 'none';
+      document.getElementById('idp-error-msg').textContent = e.message;
+      document.getElementById('idp-results').classList.add('visible');
+    } finally {
+      setLoading('idp-btn', false, 'Analyze Document');
+    }
+  }
+
+  // Palette for annotation colors
+  const ANN_COLORS = [
+    '#58a6ff','#3fb950','#d29922','#f78166','#bc8cff',
+    '#39d353','#ff7b72','#79c0ff','#ffa657','#56d364',
+  ];
+  let _currentAnnotations = {};
+
+  function drawAnnotations(canvasEl, imgEl, highlightKey) {
+    const ann  = _currentAnnotations;
+    const keys = Object.keys(ann);
+    if (!keys.length) return;
+
+    // Match canvas pixel size exactly to the rendered image size
+    const W = imgEl.offsetWidth;
+    const H = imgEl.offsetHeight;
+    if (!W || !H) return;
+    canvasEl.width  = W;
+    canvasEl.height = H;
+    // Position canvas exactly over the image (needed for lightbox)
+    canvasEl.style.width  = W + 'px';
+    canvasEl.style.height = H + 'px';
+
+    const ctx = canvasEl.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+
+    keys.forEach((key, i) => {
+      const a = ann[key];
+      if (!a || !a.bbox || a.bbox.length < 4) return;
+      const [x1, y1, x2, y2] = a.bbox;
+      const color = ANN_COLORS[i % ANN_COLORS.length];
+      const isHL  = key === highlightKey;
+      const rx = x1 * W;
+      const ry = y1 * H;
+      const rw = (x2 - x1) * W;
+      const rh = (y2 - y1) * H;
+
+      ctx.save();
+      ctx.globalAlpha = isHL ? 1 : 0.8;
+
+      // Fill
+      ctx.fillStyle = color;
+      ctx.globalAlpha = isHL ? 0.2 : 0.08;
+      ctx.fillRect(rx, ry, rw, rh);
+
+      // Border
+      ctx.globalAlpha = isHL ? 1 : 0.75;
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = isHL ? 3 : 1.5;
+      if (isHL) { ctx.shadowColor = color; ctx.shadowBlur = 8; }
+      ctx.strokeRect(rx, ry, rw, rh);
+      ctx.shadowBlur = 0;
+
+      // Label pill
+      const label = key.replace(/_/g, ' ');
+      ctx.font = `bold ${Math.max(10, Math.round(W * 0.018))}px -apple-system,sans-serif`;
+      const tw  = ctx.measureText(label).width + 10;
+      const th  = 16;
+      const ty  = ry >= th + 2 ? ry - 2 : ry + rh + th;
+      ctx.globalAlpha = isHL ? 1 : 0.85;
+      ctx.fillStyle = color;
+      ctx.fillRect(rx, ty - th + 2, tw, th);
+      ctx.fillStyle = '#0d1117';
+      ctx.globalAlpha = 1;
+      ctx.fillText(label, rx + 5, ty);
+
+      ctx.restore();
+    });
+  }
+
+  function openLightbox() {
+    const src = document.getElementById('idp-img').src;
+    if (!src || src === window.location.href) return;
+    const lb    = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightbox-img');
+    const lbCvs = document.getElementById('lightbox-canvas');
+    lbImg.src = src;
+    lb.classList.add('open');
+    // Draw AFTER browser has laid out the image at its final size
+    lbImg.onload = () => requestAnimationFrame(() => drawAnnotations(lbCvs, lbImg, null));
+    if (lbImg.complete && lbImg.naturalWidth) {
+      requestAnimationFrame(() => drawAnnotations(lbCvs, lbImg, null));
+    }
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+
+  function renderIDP(data) {
+    document.getElementById('idp-error-card').style.display = 'none';
+    document.getElementById('idp-main-card').style.display = 'block';
+    document.getElementById('idp-json-card').style.display = 'block';
+
+    _currentAnnotations = data.annotations || {};
+
+    const confColor = { high: 'badge-green', medium: 'badge-yellow', low: 'badge-red' };
+    document.getElementById('idp-badges').innerHTML = `
+      <span class="badge badge-blue">📋 ${data.document_type || 'unknown'}</span>
+      <span class="badge ${confColor[data.confidence] || 'badge-yellow'}">✓ ${data.confidence || 'unknown'} confidence</span>
+    `;
+
+    // Build annotated table
+    const table = document.getElementById('idp-table');
+    table.innerHTML = '';
+    const fields = data.extracted_fields || {};
+    const keys   = Object.keys(fields);
+
+    if (!keys.length) {
+      table.innerHTML = '<tr><td colspan="2" style="color:var(--text2)">No fields extracted.</td></tr>';
+    } else {
+      keys.forEach((k, i) => {
+        const color   = ANN_COLORS[i % ANN_COLORS.length];
+        const hasBbox = _currentAnnotations[k]?.bbox;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="color-dot" style="background:${color};${hasBbox ? '' : 'opacity:0.3'}"></span>${k.replace(/_/g,' ')}</td>
+          <td>${fields[k]}</td>`;
+        if (hasBbox) {
+          tr.addEventListener('mouseenter', () => {
+            document.querySelectorAll('#idp-table tr').forEach(r => r.classList.remove('ann-highlight'));
+            tr.classList.add('ann-highlight');
+            const img = document.getElementById('idp-img');
+            drawAnnotations(document.getElementById('idp-canvas'), img, k);
+          });
+          tr.addEventListener('mouseleave', () => {
+            tr.classList.remove('ann-highlight');
+            const img = document.getElementById('idp-img');
+            drawAnnotations(document.getElementById('idp-canvas'), img, null);
+          });
+        }
+        table.appendChild(tr);
+      });
+    }
+
+    // Draw all annotations on the preview image — wait for layout
+    const img = document.getElementById('idp-img');
+    const cvs = document.getElementById('idp-canvas');
+    const drawWhenReady = () => requestAnimationFrame(() => drawAnnotations(cvs, img, null));
+    if (img.complete && img.naturalWidth) drawWhenReady();
+    else img.onload = drawWhenReady;
+
+    document.getElementById('idp-json').textContent = JSON.stringify(data, null, 2);
+    document.getElementById('idp-results').classList.add('visible');
+  }
+
+  // ── Health ───────────────────────────────────────────────
+  async function runHealth() {
+    const resultsEl = document.getElementById('health-results');
+    resultsEl.classList.remove('visible');
+    try {
+      const res = await fetch('/health');
+      const data = await res.json();
+      const ok = data.status === 'ok';
+      document.getElementById('health-dot').className = `status-dot ${ok ? 'green' : 'red'}`;
+      document.getElementById('health-status-text').textContent = ok ? '● Service is healthy' : '● Service unhealthy';
+      document.getElementById('health-status-text').style.color = ok ? 'var(--green)' : 'var(--red)';
+      document.getElementById('health-version-text').textContent = `Version ${data.version || 'unknown'}`;
+      resultsEl.classList.add('visible');
+    } catch (e) {
+      document.getElementById('health-dot').className = 'status-dot red';
+      document.getElementById('health-status-text').textContent = '● Cannot reach API';
+      document.getElementById('health-status-text').style.color = 'var(--red)';
+      document.getElementById('health-version-text').textContent = e.message;
+      resultsEl.classList.add('visible');
+    }
+  }
+
+  // ── Database logs ────────────────────────────────────────
+  async function loadLogs() {
+    const tbody = document.getElementById('logs-tbody');
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text2);padding:32px"><span class="spinner" style="border-color:rgba(255,255,255,.2);border-top-color:var(--accent)"></span></td></tr>`;
+
+    try {
+      const res  = await fetch('/logs?limit=200', { headers: { 'X-API-Key': apiKey() } });
+      const rows = await res.json();
+      if (!res.ok) throw new Error(rows.detail || res.statusText);
+
+      // Stats bar
+      const total   = rows.length;
+      const byEp    = {};
+      let totalLat  = 0, latCount = 0;
+      rows.forEach(r => {
+        byEp[r.endpoint] = (byEp[r.endpoint] || 0) + 1;
+        if (r.latency_ms) { totalLat += r.latency_ms; latCount++; }
+      });
+      const avgLat = latCount ? (totalLat / latCount).toFixed(0) : '—';
+      const topEp  = Object.entries(byEp).sort((a,b) => b[1]-a[1])[0];
+
+      document.getElementById('db-stats').innerHTML = `
+        <div class="db-stat-card">
+          <div class="db-stat-label">Total Requests</div>
+          <div class="db-stat-value">${total}</div>
+          <div class="db-stat-sub">in database</div>
+        </div>
+        <div class="db-stat-card">
+          <div class="db-stat-label">Avg Latency</div>
+          <div class="db-stat-value">${avgLat}<span style="font-size:.8rem;font-weight:400"> ms</span></div>
+          <div class="db-stat-sub">end-to-end</div>
+        </div>
+        <div class="db-stat-card">
+          <div class="db-stat-label">Most Used</div>
+          <div class="db-stat-value" style="font-size:1rem">${topEp ? topEp[0] : '—'}</div>
+          <div class="db-stat-sub">${topEp ? topEp[1] + ' calls' : ''}</div>
+        </div>
+        <div class="db-stat-card">
+          <div class="db-stat-label">Endpoints</div>
+          <div class="db-stat-value">${Object.keys(byEp).length}</div>
+          <div class="db-stat-sub">distinct</div>
+        </div>
+      `;
+
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text2);padding:32px">No requests logged yet.</td></tr>`;
+        return;
+      }
+
+      const statusClass = s => s >= 500 ? 'status-5xx' : s >= 400 ? 'status-4xx' : 'status-2xx';
+      const epColor = { '/stt': '#58a6ff', '/tts': '#3fb950', '/idp/analyze': '#d29922' };
+      const truncate = (s, n) => s && s.length > n ? s.slice(0, n) + '…' : (s || '—');
+      const fmtDate  = iso => {
+        if (!iso) return '—';
+        const d = new Date(iso);
+        return d.toLocaleDateString() + '<br><span class="mono">' + d.toLocaleTimeString() + '</span>';
+      };
+
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td class="mono" style="color:var(--text2)">${r.id}</td>
+          <td style="white-space:nowrap;font-size:0.75rem">${fmtDate(r.timestamp)}</td>
+          <td><span class="endpoint-tag" style="background:${epColor[r.endpoint]+'22'||'rgba(88,166,255,.12)'};color:${epColor[r.endpoint]||'var(--accent)'}">${r.endpoint}</span></td>
+          <td class="mono">${truncate(r.input_data, 60)}</td>
+          <td class="mono" style="color:var(--text2)">${truncate(r.output_ref, 80)}</td>
+          <td class="mono" style="color:var(--text2);font-size:0.72rem">${r.external_usage ? r.external_usage.replace(/,/g,'<br>') : '—'}</td>
+          <td style="white-space:nowrap">${r.latency_ms != null ? `<span class="badge ${r.latency_ms < 1000 ? 'badge-green' : r.latency_ms < 5000 ? 'badge-yellow' : 'badge-red'}">${r.latency_ms} ms</span>` : '—'}</td>
+          <td><span class="status-pill ${statusClass(r.http_status)}">${r.http_status}</span></td>
+        </tr>`).join('');
+
+    } catch(e) {
+      tbody.innerHTML = `<tr><td colspan="8"><div class="error-box" style="margin:12px">${e.message}</div></td></tr>`;
+      document.getElementById('db-stats').innerHTML = '';
+    }
+  }
+
+  // Auto-load when navigating to DB panel
+  const _origShowPanel = showPanel;
+  showPanel = function(name) {
+    _origShowPanel(name);
+    if (name === 'db') loadLogs();
+  };
+
+  // ── Drag-and-drop ────────────────────────────────────────
+  ['stt-zone', 'idp-zone'].forEach(id => {
+    const zone = document.getElementById(id);
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('drag-over');
+      const input = zone.querySelector('input[type="file"]');
+      input.files = e.dataTransfer.files;
+      input.dispatchEvent(new Event('change'));
+    });
+  });
+</script>
+</body>
+</html>
