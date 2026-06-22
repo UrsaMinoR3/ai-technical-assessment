@@ -2760,6 +2760,174 @@ for field, value in data["extracted_fields"].items():
       <span class="doc-note-icon">📋</span>
       <span>Este es un diseño conceptual — no se implementa código adicional. El objetivo es demostrar la capacidad de diseñar sistemas escalables y justificar decisiones técnicas en un contexto real de call center a escala empresarial.</span>
     </div>
+
+    <!-- ── 6. On-Premises Closing Question ── -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:12px">6. Pregunta de Cierre — Entorno On-Premises</div>
+
+      <!-- Conceptual explanation -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title" style="font-size:.78rem;margin-bottom:14px;color:var(--text2)">PRIMERO — ¿QUÉ SIGNIFICA "ON-PREMISES"?</div>
+        <p style="font-size:.87rem;line-height:1.75;color:var(--text2);margin-bottom:14px">
+          <strong style="color:var(--text)">"On-premises"</strong> (también "on-prem") significa ejecutar todo el software en
+          <strong style="color:var(--text)">servidores físicos propios</strong>, dentro del edificio de la empresa —
+          en lugar de contratar capacidad de cómputo a un proveedor de nube como Azure.
+          La empresa compra el hardware, lo instala en su sala de servidores, lo mantiene y es responsable de todo lo que ocurra en él.
+          No hay ningún tercero gestionando nada.
+        </p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+          <div class="doc-concept-card">
+            <div class="doc-concept-icon">☁️</div>
+            <div class="doc-concept-term">Cloud — lo que usamos aquí</div>
+            <div class="doc-concept-body">
+              Como <strong>alquilar un apartamento</strong>. Pagas mensualmente, el propietario (Azure) se encarga de arreglar los problemas, puedes mudarte a uno más grande cuando quieras. Costo inicial bajo, escalado instantáneo, pero dependes del proveedor y los datos viajan por internet.
+            </div>
+          </div>
+          <div class="doc-concept-card">
+            <div class="doc-concept-icon">🏢</div>
+            <div class="doc-concept-term">On-Premises — la alternativa</div>
+            <div class="doc-concept-body">
+              Como <strong>comprar una casa</strong>. Inversión inicial alta en hardware, tú arreglas todo (electricidad, redes, actualizaciones), pero tienes control total. Los datos nunca salen del edificio — algo crítico en banca, salud y defensa.
+            </div>
+          </div>
+        </div>
+        <div class="doc-note" style="margin:0">
+          <span class="doc-note-icon">🏦</span>
+          <span>Para un call center bancario, on-premises puede ser <strong style="color:var(--text)">obligatorio por ley</strong>. Regulaciones como GDPR (Europa), la Ley Habeas Data (Colombia) o PCI-DSS prohíben que grabaciones de llamadas con datos financieros de clientes sean procesadas por servidores de un tercero fuera del país. En ese caso, no es una elección de preferencia — es un requisito de compliance.</span>
+        </div>
+      </div>
+
+      <!-- Mapping table -->
+      <p style="font-size:.83rem;color:var(--text2);line-height:1.7;margin-bottom:12px">
+        La siguiente tabla mapea cada servicio Azure de la arquitectura con su equivalente open-source auto-hospedado, junto con la justificación de por qué ese componente específico fue elegido como reemplazo.
+      </p>
+      <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
+        <table class="svc-justify-table">
+          <thead>
+            <tr>
+              <th style="width:22%">Servicio Azure (Cloud)</th>
+              <th style="width:26%">Equivalente On-Premises</th>
+              <th>Justificación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Azure Blob Storage (RAW)</td>
+              <td><strong>MinIO</strong></td>
+              <td>Object storage open-source compatible con la API S3 de AWS. Se instala en cualquier servidor Linux con discos grandes. Mismo modelo de "buckets con carpetas" — el código que hoy escribe en Blob Storage no necesita cambios si usa la API S3.</td>
+            </tr>
+            <tr>
+              <td>Azure Event Grid</td>
+              <td><strong>Apache Kafka</strong></td>
+              <td>Plataforma de streaming de eventos distribuida y open-source. Cuando MinIO detecta un nuevo archivo de audio, publica un evento en Kafka que lo distribuye inmediatamente a los consumidores. Es el estándar de facto para arquitecturas event-driven a escala en entornos on-prem.</td>
+            </tr>
+            <tr>
+              <td>Azure Service Bus</td>
+              <td><strong>RabbitMQ</strong></td>
+              <td>Message broker open-source maduro con soporte nativo para dead-letter queues, reintentos automáticos y acknowledgments de mensajes. Es la alternativa más directa a Service Bus: mismo modelo de "cola de trabajos", con drivers para Python, Java, Go y más.</td>
+            </tr>
+            <tr>
+              <td>Azure Container Apps + KEDA</td>
+              <td><strong>Kubernetes (K3s) + KEDA</strong></td>
+              <td>KEDA (Kubernetes Event-Driven Autoscaler) es open-source y funciona igual en on-prem que en la nube — escala contenedores según el número de mensajes en RabbitMQ. K3s es la distribución ligera de Kubernetes pensada para servidores propios. La misma lógica de auto-escalado aplica sin cambiar el código.</td>
+            </tr>
+            <tr>
+              <td>Deepgram Nova-2 (STT API)</td>
+              <td><strong>OpenAI Whisper (self-hosted)</strong></td>
+              <td>Whisper es el modelo de speech-to-text open-source de OpenAI, disponible en varios tamaños (tiny a large-v3). Se ejecuta localmente en GPU o CPU. Con faster-whisper y pyannote.audio se añade diarización. No requiere conexión a internet ni pago por minuto de audio — todo el procesamiento ocurre en los servidores propios.</td>
+            </tr>
+            <tr>
+              <td>Azure OpenAI GPT-4o</td>
+              <td><strong>Ollama + Llama 3.1 70B / Mistral</strong></td>
+              <td>Ollama es un runtime open-source que permite correr modelos de lenguaje de gran tamaño (LLMs) localmente con un solo comando. Llama 3.1 70B y Mixtral 8x7B son capaces de análisis de sentimiento, extracción de temas y resúmenes. El rendimiento es inferior a GPT-4o pero todo el procesamiento queda dentro del servidor sin enviar datos al exterior.</td>
+            </tr>
+            <tr>
+              <td>Azure Data Factory</td>
+              <td><strong>Apache Airflow</strong></td>
+              <td>Orquestador de pipelines ETL open-source más popular del mercado. Los workflows se definen como código Python (DAGs), tiene interfaz web, reintentos automáticos, alertas y conectores nativos para PostgreSQL, MinIO, Spark y más. Equivalente directo para las cargas de procesamiento por lotes nocturnos.</td>
+            </tr>
+            <tr>
+              <td>Azure PostgreSQL Flexible</td>
+              <td><strong>PostgreSQL (self-hosted)</strong></td>
+              <td>El mismo motor de base de datos — PostgreSQL es open-source. La diferencia es que on-prem tú gestionas actualizaciones, backups y alta disponibilidad (con Patroni + pgBouncer). El código de la aplicación no cambia absolutamente en nada: mismas queries, mismo ORM, mismo esquema.</td>
+            </tr>
+            <tr>
+              <td>Azure Cosmos DB</td>
+              <td><strong>MongoDB Community Edition</strong></td>
+              <td>Base de datos documental open-source con el mismo modelo de datos (documentos JSON), queries flexibles y baja latencia de lectura. La API difiere de Cosmos DB pero el concepto es idéntico. Alternativas: CouchDB para entornos más simples, o OpenSearch para búsqueda de texto completo en transcripciones.</td>
+            </tr>
+            <tr>
+              <td>ADLS Gen2 (Data Lake)</td>
+              <td><strong>MinIO + Apache Iceberg</strong></td>
+              <td>MinIO provee el almacenamiento de objetos. Apache Iceberg agrega la capa de tabla analítica con soporte para arquitectura Bronze/Silver/Gold, evolución de esquema y time travel (ver el estado de los datos en cualquier punto del pasado). Juntos replican las capacidades del Data Lake de Azure sin dependencia de ningún proveedor.</td>
+            </tr>
+            <tr>
+              <td>Azure Synapse Analytics</td>
+              <td><strong>Apache Spark + Trino</strong></td>
+              <td>Spark distribuye el procesamiento de grandes volúmenes de datos sobre el Data Lake (MinIO). Trino (antes PrestoSQL) permite queries SQL ad-hoc sobre esos datos con baja latencia, equivalente al SQL serverless de Synapse. Para volúmenes menores, DuckDB es una alternativa más simple que corre en un solo servidor.</td>
+            </tr>
+            <tr>
+              <td>Power BI</td>
+              <td><strong>Apache Superset</strong></td>
+              <td>BI open-source con soporte para dashboards interactivos, conectores SQL a PostgreSQL y Trino, filtros dinámicos y una librería de gráficos comparable a Power BI. Alternativa: Metabase, más simple y con UI más amigable para usuarios no técnicos como supervisores de call center.</td>
+            </tr>
+            <tr>
+              <td>Azure Monitor + Alerts</td>
+              <td><strong>Prometheus + Grafana + Alertmanager</strong></td>
+              <td>Stack de observabilidad open-source que es el estándar de la industria. Prometheus recolecta métricas de todos los servicios, Grafana las visualiza en dashboards en tiempo real, y Alertmanager envía notificaciones (email, Slack, PagerDuty) cuando se detecta un evento crítico — por ejemplo, sentimiento negativo extremo en una llamada activa.</td>
+            </tr>
+            <tr>
+              <td>Azure Key Vault</td>
+              <td><strong>HashiCorp Vault</strong></td>
+              <td>Gestor de secretos open-source considerado el estándar de la industria para entornos on-prem. Guarda API keys, contraseñas y certificados con control de acceso por roles, rotación automática y audit log completo. Funciona con el mismo patrón que Key Vault: los servicios solicitan el secreto en tiempo de ejecución, nunca está hardcodeado.</td>
+            </tr>
+            <tr>
+              <td>Azure Active Directory + RBAC</td>
+              <td><strong>Keycloak</strong></td>
+              <td>Identity provider open-source de Red Hat. Gestiona autenticación (OAuth2, OpenID Connect, SAML) y roles para todos los servicios del stack. Cada servicio verifica identidad con Keycloak en lugar de Azure AD. Es el equivalente directo para entornos sin directorio en la nube.</td>
+            </tr>
+            <tr>
+              <td>Azure Private Endpoints + VNet</td>
+              <td><strong>Red interna LAN / VLAN</strong></td>
+              <td>En on-premises, los servidores ya están físicamente en la misma red del edificio. El tráfico entre servicios nunca sale a internet por definición — se gestiona con VLANs y reglas de firewall interno. No hay nada que instalar: es la naturaleza inherente del entorno on-prem.</td>
+            </tr>
+            <tr>
+              <td>Application Insights (APM)</td>
+              <td><strong>OpenTelemetry + Jaeger</strong></td>
+              <td>OpenTelemetry es el estándar abierto de la industria para instrumentación de trazas, métricas y logs. Jaeger almacena y visualiza trazas distribuidas, permitiendo ver exactamente cuánto tardó cada etapa del pipeline — desde que llega el mensaje a RabbitMQ hasta que se escribe en PostgreSQL — sin telemetría en la nube.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Key trade-offs -->
+      <div class="card">
+        <div class="card-title" style="font-size:.78rem;margin-bottom:12px;color:var(--text2)">DESAFÍOS PRINCIPALES AL IR A ON-PREMISES</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+          <div class="nfr-card" style="border-color:rgba(248,81,73,0.25)">
+            <div class="nfr-card-title" style="font-size:.78rem">⚙️ Operación y mantenimiento</div>
+            <ul>
+              <li><span>En la nube, Azure gestiona parches, backups y failover. On-prem, tu equipo lo hace todo.</span></li>
+              <li><span>Escalar significa <strong>comprar servidores físicos</strong>, instalarlos y configurarlos — semanas vs minutos en la nube.</span></li>
+              <li><span>Si un disco falla a las 3am, alguien de tu equipo debe ir físicamente a arreglarlo.</span></li>
+            </ul>
+          </div>
+          <div class="nfr-card" style="border-color:rgba(248,81,73,0.25)">
+            <div class="nfr-card-title" style="font-size:.78rem">🤖 Calidad de los modelos AI</div>
+            <ul>
+              <li><span>Whisper large-v3 es bueno pero <strong>requiere GPU</strong> para ser viable en producción a alta velocidad.</span></li>
+              <li><span>Llama 3.1 70B es capaz pero GPT-4o sigue siendo más preciso en análisis de sentimiento complejo.</span></li>
+              <li><span>El costo de hardware GPU para servir LLMs localmente puede superar el costo cloud si el volumen es bajo o los picos son impredecibles.</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="doc-note" style="margin:0">
+          <span class="doc-note-icon">🎯</span>
+          <span><strong>¿Cuándo elegir on-premises sobre cloud?</strong> Cuando los datos son tan sensibles que ninguna regulación permite enviarlos a un tercero (llamadas con datos bancarios en países con leyes estrictas de soberanía de datos), o cuando el volumen es tan predecible y constante que el costo del hardware propio es menor que la factura mensual de la nube. En la mayoría de los demás casos, el costo total de on-prem —incluyendo el equipo de operaciones necesario— supera al cloud.</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- ── Health Panel ── -->
