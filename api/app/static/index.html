@@ -793,6 +793,47 @@
     .nfr-card li { font-size: 0.78rem; color: var(--text2); display: flex; gap: 7px; line-height: 1.4; }
     .nfr-card li::before { content: "›"; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
 
+    /* ── Interactive Architecture SVG diagram ───────────── */
+    .arch-visual-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 20px;
+      position: relative;
+    }
+    .arch-visual-hdr {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 16px; background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .arch-visual-hdr span:first-child { font-size:.8rem; font-weight:700; color:var(--text); }
+    .arch-visual-hdr span:last-child  { font-size:.72rem; color:var(--text2); }
+    #arch-tip {
+      position: fixed; z-index: 9999;
+      max-width: 250px; min-width: 180px;
+      background: var(--surface2); border: 1px solid var(--accent);
+      border-radius: 8px; padding: 10px 13px;
+      font-size: .78rem; pointer-events: none;
+      box-shadow: 0 8px 28px rgba(0,0,0,.5);
+      display: none;
+    }
+    #arch-tip .tip-title { font-weight:700; color:var(--accent); margin-bottom:3px; font-size:.8rem; }
+    #arch-tip .tip-layer { font-size:.65rem; text-transform:uppercase; letter-spacing:.07em; color:var(--text2); margin-bottom:6px; }
+    #arch-tip .tip-desc  { color:var(--text2); line-height:1.5; }
+    .arch-conn { fill:none; stroke:#30363d; stroke-width:1.5; transition:stroke .15s,opacity .15s; }
+    .arch-conn.conn-hi  { stroke:#58a6ff !important; stroke-width:2 !important; opacity:1 !important; }
+    .arch-conn.conn-dim { opacity:.12 !important; }
+    .arch-node-g { cursor:pointer; }
+    .arch-node-g .node-rect { transition:filter .15s,opacity .15s; }
+    .arch-node-g.node-hi .node-rect { filter:brightness(1.35); }
+    .arch-node-g.node-dim .node-rect { opacity:.2; }
+    .arch-node-g.node-dim text       { opacity:.2; }
+    .conn-flow { pointer-events:none; }
+    .arch-legend {
+      display:flex; gap:18px; padding:8px 16px; flex-wrap:wrap;
+      background:var(--surface2); border-top:1px solid var(--border);
+    }
+    .arch-legend-item { display:flex; align-items:center; gap:6px; font-size:.72rem; color:var(--text2); }
+    .arch-legend-dot  { width:9px; height:9px; border-radius:50%; }
+
     /* ── Print / PDF export ──────────────────────────────── */
     @media print {
       body { background: #fff !important; color: #111 !important; }
@@ -2108,6 +2149,294 @@ for field, value in data["extracted_fields"].items():
         Proveedor cloud elegido: <strong style="color:var(--accent)">Microsoft Azure</strong> — consistente con el Azure OpenAI (GPT-4o) ya integrado en este proyecto.
         Se combina con <strong style="color:var(--accent)">Deepgram</strong> para STT, aprovechando la integración ya validada.
       </p>
+
+      <!-- ── Interactive SVG Diagram ── -->
+      <div class="arch-visual-wrap">
+        <div class="arch-visual-hdr">
+          <span>Interactive Flow Diagram</span>
+          <span>Hover any service to highlight its connections — click to pin focus</span>
+        </div>
+
+        <div id="arch-tip">
+          <div class="tip-title" id="tip-title"></div>
+          <div class="tip-layer" id="tip-layer"></div>
+          <div class="tip-desc"  id="tip-desc"></div>
+        </div>
+
+        <svg id="arch-svg" viewBox="0 0 780 670" width="100%" style="display:block;background:var(--bg);padding:6px 0">
+          <defs>
+            <marker id="mArr"    markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#4d5761"/>
+            </marker>
+            <marker id="mArrHi" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#58a6ff"/>
+            </marker>
+            <marker id="mArrRev" markerWidth="8" markerHeight="6" refX="1" refY="3" orient="auto-start-reverse">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#4d5761"/>
+            </marker>
+          </defs>
+
+          <!-- ── Layer background bands ── -->
+          <rect x="5"  y="10"  width="770" height="188" rx="6" fill="rgba(63,185,80,0.04)"  stroke="rgba(63,185,80,0.18)"  stroke-width="1"/>
+          <text x="16" y="26"  font-size="9" fill="rgba(63,185,80,0.55)"  font-family="monospace" font-weight="700" letter-spacing="1">INGESTION</text>
+
+          <rect x="5"  y="288" width="770" height="172" rx="6" fill="rgba(88,166,255,0.04)" stroke="rgba(88,166,255,0.15)" stroke-width="1"/>
+          <text x="16" y="304" font-size="9" fill="rgba(88,166,255,0.55)" font-family="monospace" font-weight="700" letter-spacing="1">PROCESSING</text>
+
+          <rect x="5"  y="490" width="770" height="66"  rx="6" fill="rgba(210,153,34,0.04)" stroke="rgba(210,153,34,0.18)" stroke-width="1"/>
+          <text x="16" y="506" font-size="9" fill="rgba(210,153,34,0.55)" font-family="monospace" font-weight="700" letter-spacing="1">STORAGE</text>
+
+          <rect x="5"  y="588" width="770" height="74"  rx="6" fill="rgba(188,140,255,0.04)"stroke="rgba(188,140,255,0.15)"stroke-width="1"/>
+          <text x="16" y="604" font-size="9" fill="rgba(188,140,255,0.55)"font-family="monospace" font-weight="700" letter-spacing="1">ANALYTICS</text>
+
+          <!-- ── Connection paths ── -->
+          <!-- pbx → blob -->
+          <path id="cp-pbx-blob" class="arch-conn" data-from="pbx" data-to="blob"
+                d="M 390,72 L 390,115" marker-end="url(#mArr)"/>
+
+          <!-- blob → eventgrid -->
+          <path id="cp-blob-eg" class="arch-conn" data-from="blob" data-to="eventgrid"
+                d="M 345,158 C 345,183 184,183 184,200" marker-end="url(#mArr)"/>
+          <text x="237" y="178" font-size="8.5" fill="#4d5761" text-anchor="middle">triggers</text>
+
+          <!-- eventgrid → servicebus -->
+          <path id="cp-eg-sb" class="arch-conn" data-from="eventgrid" data-to="servicebus"
+                d="M 264,221 L 516,221" marker-end="url(#mArr)"/>
+          <text x="390" y="216" font-size="8.5" fill="#4d5761" text-anchor="middle">event</text>
+
+          <!-- servicebus → container -->
+          <path id="cp-sb-ca" class="arch-conn" data-from="servicebus" data-to="container"
+                d="M 596,242 C 596,275 508,275 508,300" marker-end="url(#mArr)"/>
+          <text x="582" y="268" font-size="8.5" fill="#4d5761" text-anchor="middle">job</text>
+
+          <!-- container ↔ deepgram (bidirectional) -->
+          <path id="cp-ca-dg" class="arch-conn" data-from="container" data-to="deepgram"
+                d="M 320,352 C 320,390 120,390 120,410"
+                marker-end="url(#mArr)" marker-start="url(#mArrRev)"/>
+          <text x="192" y="384" font-size="8" fill="#4d5761" text-anchor="middle">audio ↔ transcript</text>
+
+          <!-- container ↔ openai (bidirectional) -->
+          <path id="cp-ca-oai" class="arch-conn" data-from="container" data-to="openai"
+                d="M 390,352 L 390,410"
+                marker-end="url(#mArr)" marker-start="url(#mArrRev)"/>
+
+          <!-- container → datafactory -->
+          <path id="cp-ca-df" class="arch-conn" data-from="container" data-to="datafactory"
+                d="M 458,352 C 458,390 660,390 660,410" marker-end="url(#mArr)"/>
+          <text x="588" y="384" font-size="8.5" fill="#4d5761" text-anchor="middle">batch ETL</text>
+
+          <!-- deepgram → postgres -->
+          <path id="cp-dg-pg" class="arch-conn" data-from="deepgram" data-to="postgres"
+                d="M 120,452 L 120,500" marker-end="url(#mArr)"/>
+
+          <!-- openai → cosmos -->
+          <path id="cp-oai-cos" class="arch-conn" data-from="openai" data-to="cosmos"
+                d="M 390,452 L 390,500" marker-end="url(#mArr)"/>
+
+          <!-- datafactory → adls -->
+          <path id="cp-df-adls" class="arch-conn" data-from="datafactory" data-to="adls"
+                d="M 660,452 L 657,500" marker-end="url(#mArr)"/>
+
+          <!-- postgres → synapse -->
+          <path id="cp-pg-syn" class="arch-conn" data-from="postgres" data-to="synapse"
+                d="M 124,542 L 124,596" marker-end="url(#mArr)"/>
+
+          <!-- cosmos → powerbi -->
+          <path id="cp-cos-pbi" class="arch-conn" data-from="cosmos" data-to="powerbi"
+                d="M 390,542 L 390,596" marker-end="url(#mArr)"/>
+
+          <!-- adls → synapse (long cross) -->
+          <path id="cp-adls-syn" class="arch-conn" data-from="adls" data-to="synapse"
+                d="M 657,542 C 657,568 208,568 208,596" marker-end="url(#mArr)"/>
+          <text x="432" y="563" font-size="8.5" fill="#4d5761" text-anchor="middle">lake data</text>
+
+          <!-- synapse → powerbi -->
+          <path id="cp-syn-pbi" class="arch-conn" data-from="synapse" data-to="powerbi"
+                d="M 208,617 L 312,617" marker-end="url(#mArr)"/>
+          <text x="260" y="612" font-size="8.5" fill="#4d5761" text-anchor="middle">aggregates</text>
+
+          <!-- container → monitor (alert, dashed) -->
+          <path id="cp-ca-mon" class="arch-conn" data-from="container" data-to="monitor"
+                d="M 508,326 C 750,326 750,617 740,617"
+                stroke-dasharray="5,3" marker-end="url(#mArr)"/>
+          <text x="718" y="453" font-size="8.5" fill="#4d5761" text-anchor="middle">alerts</text>
+
+          <!-- ── Animated flow dots ── -->
+          <circle r="3" fill="#3fb950" opacity="0.85" class="conn-flow">
+            <animateMotion dur="1.4s" repeatCount="indefinite"><mpath href="#cp-pbx-blob"/></animateMotion>
+          </circle>
+          <circle r="3" fill="#3fb950" opacity="0.85" class="conn-flow">
+            <animateMotion dur="1.8s" repeatCount="indefinite"><mpath href="#cp-blob-eg"/></animateMotion>
+          </circle>
+          <circle r="3" fill="#3fb950" opacity="0.85" class="conn-flow">
+            <animateMotion dur="2.2s" repeatCount="indefinite"><mpath href="#cp-eg-sb"/></animateMotion>
+          </circle>
+          <circle r="3" fill="#3fb950" opacity="0.85" class="conn-flow">
+            <animateMotion dur="1.8s" repeatCount="indefinite"><mpath href="#cp-sb-ca"/></animateMotion>
+          </circle>
+          <circle r="3" fill="#58a6ff" opacity="0.85" class="conn-flow">
+            <animateMotion dur="2s" repeatCount="indefinite"><mpath href="#cp-ca-dg"/></animateMotion>
+          </circle>
+          <circle r="3" fill="#58a6ff" opacity="0.85" class="conn-flow">
+            <animateMotion dur="2s" repeatCount="indefinite"><mpath href="#cp-ca-oai"/></animateMotion>
+          </circle>
+          <circle r="3" fill="#58a6ff" opacity="0.85" class="conn-flow">
+            <animateMotion dur="2.2s" repeatCount="indefinite"><mpath href="#cp-ca-df"/></animateMotion>
+          </circle>
+          <circle r="2.5" fill="#d29922" opacity="0.85" class="conn-flow">
+            <animateMotion dur="1.4s" repeatCount="indefinite"><mpath href="#cp-dg-pg"/></animateMotion>
+          </circle>
+          <circle r="2.5" fill="#d29922" opacity="0.85" class="conn-flow">
+            <animateMotion dur="1.4s" repeatCount="indefinite"><mpath href="#cp-oai-cos"/></animateMotion>
+          </circle>
+          <circle r="2.5" fill="#d29922" opacity="0.85" class="conn-flow">
+            <animateMotion dur="1.4s" repeatCount="indefinite"><mpath href="#cp-df-adls"/></animateMotion>
+          </circle>
+          <circle r="2.5" fill="#bc8cff" opacity="0.85" class="conn-flow">
+            <animateMotion dur="1.6s" repeatCount="indefinite"><mpath href="#cp-pg-syn"/></animateMotion>
+          </circle>
+          <circle r="2.5" fill="#bc8cff" opacity="0.85" class="conn-flow">
+            <animateMotion dur="1.6s" repeatCount="indefinite"><mpath href="#cp-cos-pbi"/></animateMotion>
+          </circle>
+          <circle r="2.5" fill="#bc8cff" opacity="0.85" class="conn-flow">
+            <animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#cp-adls-syn"/></animateMotion>
+          </circle>
+          <circle r="2.5" fill="#bc8cff" opacity="0.85" class="conn-flow">
+            <animateMotion dur="1.4s" repeatCount="indefinite"><mpath href="#cp-syn-pbi"/></animateMotion>
+          </circle>
+          <circle r="2.5" fill="#f85149" opacity="0.75" class="conn-flow">
+            <animateMotion dur="3.2s" repeatCount="indefinite"><mpath href="#cp-ca-mon"/></animateMotion>
+          </circle>
+
+          <!-- ── Nodes ── -->
+
+          <!-- PBX -->
+          <g class="arch-node-g" data-node="pbx" data-conns="cp-pbx-blob">
+            <rect class="node-rect" x="308" y="30" width="164" height="44" rx="7"
+                  fill="#0d2316" stroke="#3fb950" stroke-width="1.5"/>
+            <text x="390" y="51" font-size="14" text-anchor="middle" dominant-baseline="middle">☎️</text>
+            <text x="390" y="65" font-size="9.5" text-anchor="middle" fill="#e6edf3" font-weight="600">PBX / Phone System</text>
+          </g>
+
+          <!-- Blob Storage -->
+          <g class="arch-node-g" data-node="blob" data-conns="cp-pbx-blob cp-blob-eg">
+            <rect class="node-rect" x="293" y="113" width="194" height="44" rx="7"
+                  fill="#0d2316" stroke="#3fb950" stroke-width="1.5"/>
+            <text x="390" y="134" font-size="13" text-anchor="middle" dominant-baseline="middle">📥</text>
+            <text x="390" y="148" font-size="9.5" text-anchor="middle" fill="#e6edf3" font-weight="600">Azure Blob Storage (RAW)</text>
+          </g>
+
+          <!-- Event Grid -->
+          <g class="arch-node-g" data-node="eventgrid" data-conns="cp-blob-eg cp-eg-sb">
+            <rect class="node-rect" x="100" y="199" width="168" height="44" rx="7"
+                  fill="#0d2316" stroke="#3fb950" stroke-width="1.5"/>
+            <text x="184" y="220" font-size="13" text-anchor="middle" dominant-baseline="middle">⚡</text>
+            <text x="184" y="234" font-size="9.5" text-anchor="middle" fill="#e6edf3" font-weight="600">Azure Event Grid</text>
+          </g>
+
+          <!-- Service Bus -->
+          <g class="arch-node-g" data-node="servicebus" data-conns="cp-eg-sb cp-sb-ca">
+            <rect class="node-rect" x="512" y="199" width="168" height="44" rx="7"
+                  fill="#0d2316" stroke="#3fb950" stroke-width="1.5"/>
+            <text x="596" y="220" font-size="13" text-anchor="middle" dominant-baseline="middle">📨</text>
+            <text x="596" y="234" font-size="9.5" text-anchor="middle" fill="#e6edf3" font-weight="600">Azure Service Bus</text>
+          </g>
+
+          <!-- Container Apps (wide) -->
+          <g class="arch-node-g" data-node="container" data-conns="cp-sb-ca cp-ca-dg cp-ca-oai cp-ca-df cp-ca-mon">
+            <rect class="node-rect" x="268" y="298" width="244" height="54" rx="8"
+                  fill="#0d1b2e" stroke="#58a6ff" stroke-width="2"/>
+            <text x="390" y="320" font-size="13" text-anchor="middle" dominant-baseline="middle">🐳</text>
+            <text x="390" y="336" font-size="10" text-anchor="middle" fill="#e6edf3" font-weight="700">Azure Container Apps</text>
+            <text x="390" y="348" font-size="8.5" text-anchor="middle" fill="#8b949e">Orchestrator · auto-scales 0→N</text>
+          </g>
+
+          <!-- Deepgram -->
+          <g class="arch-node-g" data-node="deepgram" data-conns="cp-ca-dg cp-dg-pg">
+            <rect class="node-rect" x="38" y="408" width="164" height="44" rx="7"
+                  fill="#0d1b2e" stroke="#58a6ff" stroke-width="1.5"/>
+            <text x="120" y="429" font-size="13" text-anchor="middle" dominant-baseline="middle">🎙️</text>
+            <text x="120" y="443" font-size="9.5" text-anchor="middle" fill="#e6edf3" font-weight="600">Deepgram Nova-2</text>
+          </g>
+
+          <!-- Azure OpenAI -->
+          <g class="arch-node-g" data-node="openai" data-conns="cp-ca-oai cp-oai-cos">
+            <rect class="node-rect" x="308" y="408" width="164" height="44" rx="7"
+                  fill="#0d1b2e" stroke="#58a6ff" stroke-width="1.5"/>
+            <text x="390" y="427" font-size="13" text-anchor="middle" dominant-baseline="middle">🧠</text>
+            <text x="390" y="441" font-size="9.5" text-anchor="middle" fill="#e6edf3" font-weight="600">Azure OpenAI GPT-4o</text>
+          </g>
+
+          <!-- Data Factory -->
+          <g class="arch-node-g" data-node="datafactory" data-conns="cp-ca-df cp-df-adls">
+            <rect class="node-rect" x="578" y="408" width="164" height="44" rx="7"
+                  fill="#0d1b2e" stroke="#58a6ff" stroke-width="1.5"/>
+            <text x="660" y="427" font-size="13" text-anchor="middle" dominant-baseline="middle">🔄</text>
+            <text x="660" y="441" font-size="9.5" text-anchor="middle" fill="#e6edf3" font-weight="600">Azure Data Factory</text>
+          </g>
+
+          <!-- PostgreSQL -->
+          <g class="arch-node-g" data-node="postgres" data-conns="cp-dg-pg cp-pg-syn">
+            <rect class="node-rect" x="38" y="498" width="164" height="44" rx="7"
+                  fill="#2b1f00" stroke="#d29922" stroke-width="1.5"/>
+            <text x="120" y="519" font-size="13" text-anchor="middle" dominant-baseline="middle">🗄️</text>
+            <text x="120" y="533" font-size="9.5" text-anchor="middle" fill="#e6edf3" font-weight="600">Azure PostgreSQL</text>
+          </g>
+
+          <!-- Cosmos DB -->
+          <g class="arch-node-g" data-node="cosmos" data-conns="cp-oai-cos cp-cos-pbi">
+            <rect class="node-rect" x="308" y="498" width="164" height="44" rx="7"
+                  fill="#2b1f00" stroke="#d29922" stroke-width="1.5"/>
+            <text x="390" y="519" font-size="13" text-anchor="middle" dominant-baseline="middle">🌌</text>
+            <text x="390" y="533" font-size="9.5" text-anchor="middle" fill="#e6edf3" font-weight="600">Azure Cosmos DB</text>
+          </g>
+
+          <!-- ADLS Gen2 -->
+          <g class="arch-node-g" data-node="adls" data-conns="cp-df-adls cp-adls-syn">
+            <rect class="node-rect" x="578" y="498" width="158" height="44" rx="7"
+                  fill="#2b1f00" stroke="#d29922" stroke-width="1.5"/>
+            <text x="657" y="519" font-size="13" text-anchor="middle" dominant-baseline="middle">🏔️</text>
+            <text x="657" y="533" font-size="9.5" text-anchor="middle" fill="#e6edf3" font-weight="600">ADLS Gen2 (Data Lake)</text>
+          </g>
+
+          <!-- Synapse -->
+          <g class="arch-node-g" data-node="synapse" data-conns="cp-pg-syn cp-adls-syn cp-syn-pbi">
+            <rect class="node-rect" x="38" y="596" width="172" height="44" rx="7"
+                  fill="#1d1229" stroke="#bc8cff" stroke-width="1.5"/>
+            <text x="124" y="617" font-size="13" text-anchor="middle" dominant-baseline="middle">🔬</text>
+            <text x="124" y="631" font-size="9.5" text-anchor="middle" fill="#e6edf3" font-weight="600">Azure Synapse Analytics</text>
+          </g>
+
+          <!-- Power BI -->
+          <g class="arch-node-g" data-node="powerbi" data-conns="cp-cos-pbi cp-syn-pbi">
+            <rect class="node-rect" x="308" y="596" width="164" height="44" rx="7"
+                  fill="#1d1229" stroke="#bc8cff" stroke-width="1.5"/>
+            <text x="390" y="617" font-size="13" text-anchor="middle" dominant-baseline="middle">📊</text>
+            <text x="390" y="631" font-size="9.5" text-anchor="middle" fill="#e6edf3" font-weight="600">Power BI</text>
+          </g>
+
+          <!-- Monitor -->
+          <g class="arch-node-g" data-node="monitor" data-conns="cp-ca-mon">
+            <rect class="node-rect" x="570" y="596" width="172" height="44" rx="7"
+                  fill="#1d1229" stroke="#bc8cff" stroke-width="1.5"/>
+            <text x="656" y="617" font-size="13" text-anchor="middle" dominant-baseline="middle">🔔</text>
+            <text x="656" y="631" font-size="9.5" text-anchor="middle" fill="#e6edf3" font-weight="600">Azure Monitor + Alerts</text>
+          </g>
+
+        </svg>
+
+        <!-- Legend -->
+        <div class="arch-legend">
+          <div class="arch-legend-item"><div class="arch-legend-dot" style="background:#3fb950"></div>Ingestion</div>
+          <div class="arch-legend-item"><div class="arch-legend-dot" style="background:#58a6ff"></div>Processing</div>
+          <div class="arch-legend-item"><div class="arch-legend-dot" style="background:#d29922"></div>Storage</div>
+          <div class="arch-legend-item"><div class="arch-legend-dot" style="background:#bc8cff"></div>Analytics</div>
+          <div class="arch-legend-item"><span style="color:var(--text2)">⟷ bidirectional</span></div>
+          <div class="arch-legend-item"><span style="color:var(--text2)">- - - alert path</span></div>
+        </div>
+      </div>
+      <!-- End Interactive Diagram -->
+
       <div class="arch-diagram">
 
         <!-- Layer 1: Ingestion -->
@@ -2493,6 +2822,150 @@ for field, value in data["extracted_fields"].items():
     document.getElementById('nav-' + name).classList.add('active');
     closeSidebar();
   }
+
+  // ── Interactive Architecture Diagram ─────────────────────
+  const ARCH_NODE_DATA = {
+    pbx:         { title:'PBX / Phone System',         layer:'Ingestion',  desc:'The origin of all call recordings. When a call ends, the PBX exports a WAV/MP3 file and uploads it directly to Azure Blob Storage via SFTP or REST API.' },
+    blob:        { title:'Azure Blob Storage (RAW)',    layer:'Ingestion',  desc:'Landing zone for raw audio files. Organized in folders by date/agent/campaign. 11 nines durability at low cost — the right choice for storing large binary files.' },
+    eventgrid:   { title:'Azure Event Grid',            layer:'Ingestion',  desc:'Watches Blob Storage for new uploads. The moment a recording lands, Event Grid fires an event instantly — no polling, no delay. This is what makes the pipeline event-driven.' },
+    servicebus:  { title:'Azure Service Bus',           layer:'Ingestion',  desc:'Message queue that decouples ingestion from processing. Even if 50,000 files arrive at once, Service Bus absorbs the spike and feeds them to Container Apps at a controlled rate with guaranteed delivery.' },
+    container:   { title:'Azure Container Apps',        layer:'Processing', desc:'The main orchestrator. Picks up jobs from Service Bus, downloads the audio, calls Deepgram and OpenAI, then writes results to all three storage services. Scales to 0 when idle, to hundreds of instances under load using KEDA.' },
+    deepgram:    { title:'Deepgram Nova-2 (STT)',        layer:'Processing', desc:'Transcribes each call audio. Returns the full transcript with speaker diarization (who said what), language auto-detection, and word-level timestamps. The ↔ arrow means Container Apps sends audio and receives the transcript back.' },
+    openai:      { title:'Azure OpenAI GPT-4o',         layer:'Processing', desc:'Analyzes the transcript from Deepgram. Extracts: sentiment score (0–100), call topics, customer entities (masked for PII), and a 3-sentence executive summary. The ↔ arrow means Container Apps sends the transcript and receives the structured JSON back.' },
+    datafactory: { title:'Azure Data Factory',          layer:'Processing', desc:'Orchestrates nightly bulk ETL pipelines for historical data. Transforms raw records through Bronze → Silver → Gold layers and loads them into ADLS Gen2 for analytics and ML retraining.' },
+    postgres:    { title:'Azure PostgreSQL',             layer:'Storage',    desc:'Stores structured call metadata: agent ID, campaign, sentiment score, topics, quality score, call duration. Optimized for SQL queries — this is what Synapse joins to generate agent ranking reports.' },
+    cosmos:      { title:'Azure Cosmos DB',              layer:'Storage',    desc:'Stores full transcripts and AI summaries as JSON documents. Sub-10ms read latency allows supervisors to pull up any call transcript instantly without impacting the SQL reporting workloads.' },
+    adls:        { title:'ADLS Gen2 (Data Lake)',        layer:'Storage',    desc:'Long-term archive in Bronze/Silver/Gold layers. Used for: compliance audits (immutable history), Synapse serverless queries over historical data, and feeding ML pipelines to retrain models.' },
+    synapse:     { title:'Azure Synapse Analytics',      layer:'Analytics',  desc:'Runs serverless SQL queries across PostgreSQL and the Data Lake without provisioning infrastructure. Generates hourly aggregate metrics: agent quality rankings, sentiment trends by campaign, topic frequency.' },
+    powerbi:     { title:'Power BI',                     layer:'Analytics',  desc:'Interactive dashboards for supervisors and management. Real-time views of: agent quality scores, campaign sentiment trends, call topic distribution, and customer satisfaction predictions.' },
+    monitor:     { title:'Azure Monitor + Alerts',       layer:'Analytics',  desc:'Receives alert triggers from Container Apps when it detects a very negative sentiment call (score < 20). Notifies the supervisor within minutes via email or Teams so they can intervene or review the call.' },
+  };
+
+  (function initArchDiagram() {
+    const svg    = document.getElementById('arch-svg');
+    if (!svg) return;
+    const tip    = document.getElementById('arch-tip');
+    const tipT   = document.getElementById('tip-title');
+    const tipL   = document.getElementById('tip-layer');
+    const tipD   = document.getElementById('tip-desc');
+    const nodes  = svg.querySelectorAll('.arch-node-g');
+    const conns  = svg.querySelectorAll('.arch-conn');
+    let pinned   = null;
+
+    function getAllConnIds(nodeEl) {
+      return (nodeEl.dataset.conns || '').split(' ').filter(Boolean);
+    }
+    function highlightNode(nodeId) {
+      const target = svg.querySelector(`.arch-node-g[data-node="${nodeId}"]`);
+      if (!target) return;
+      const connIds = new Set(getAllConnIds(target));
+      // Highlight relevant connections, dim others
+      conns.forEach(c => {
+        const cid = c.id;
+        if (connIds.has(cid)) {
+          c.classList.add('conn-hi');
+          c.classList.remove('conn-dim');
+          // Update arrowhead color by updating marker-end
+        } else {
+          c.classList.add('conn-dim');
+          c.classList.remove('conn-hi');
+        }
+      });
+      // Collect nodes touched by highlighted connections
+      const touchedNodes = new Set([nodeId]);
+      conns.forEach(c => {
+        if (connIds.has(c.id)) {
+          touchedNodes.add(c.dataset.from);
+          touchedNodes.add(c.dataset.to);
+        }
+      });
+      // Dim/highlight node groups
+      nodes.forEach(n => {
+        const nid = n.dataset.node;
+        if (touchedNodes.has(nid)) {
+          n.classList.add('node-hi');
+          n.classList.remove('node-dim');
+        } else {
+          n.classList.add('node-dim');
+          n.classList.remove('node-hi');
+        }
+      });
+    }
+
+    function resetAll() {
+      conns.forEach(c => { c.classList.remove('conn-hi','conn-dim'); });
+      nodes.forEach(n => { n.classList.remove('node-hi','node-dim'); });
+    }
+
+    function showTip(nodeId, evt) {
+      const d = ARCH_NODE_DATA[nodeId];
+      if (!d) return;
+      tipT.textContent = d.title;
+      tipL.textContent = d.layer;
+      tipD.textContent = d.desc;
+      tip.style.display = 'block';
+      positionTip(evt);
+    }
+
+    function positionTip(evt) {
+      const tw = tip.offsetWidth || 250;
+      const th = tip.offsetHeight || 120;
+      let x = evt.clientX + 14;
+      let y = evt.clientY + 14;
+      if (x + tw > window.innerWidth - 10)  x = evt.clientX - tw - 14;
+      if (y + th > window.innerHeight - 10) y = evt.clientY - th - 14;
+      tip.style.left = x + 'px';
+      tip.style.top  = y + 'px';
+    }
+
+    nodes.forEach(node => {
+      const nid = node.dataset.node;
+
+      node.addEventListener('mouseenter', function(e) {
+        if (pinned && pinned !== nid) return;
+        highlightNode(nid);
+        showTip(nid, e);
+      });
+
+      node.addEventListener('mousemove', function(e) {
+        if (tip.style.display === 'block') positionTip(e);
+      });
+
+      node.addEventListener('mouseleave', function() {
+        if (pinned) return;
+        resetAll();
+        tip.style.display = 'none';
+      });
+
+      node.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (pinned === nid) {
+          pinned = null;
+          resetAll();
+          tip.style.display = 'none';
+        } else {
+          pinned = nid;
+          highlightNode(nid);
+          showTip(nid, e);
+        }
+      });
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!svg.contains(e.target) && pinned) {
+        pinned = null;
+        resetAll();
+        tip.style.display = 'none';
+      }
+    });
+
+    svg.addEventListener('mouseleave', function() {
+      if (!pinned) {
+        resetAll();
+        tip.style.display = 'none';
+      }
+    });
+  })();
 
   // ── Architecture PDF export ──────────────────────────────
   // @media print CSS (defined in <style>) hides everything except #panel-arch.
