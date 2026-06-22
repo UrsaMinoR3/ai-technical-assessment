@@ -545,6 +545,69 @@
     }
     .doc-swagger-btn:hover { color: var(--accent); border-color: var(--accent); }
 
+    .doc-concept-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+      gap: 14px; margin-bottom: 8px;
+    }
+    .doc-concept-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px;
+    }
+    .doc-concept-icon { font-size: 1.5rem; margin-bottom: 8px; }
+    .doc-concept-term {
+      font-size: 0.88rem; font-weight: 700; color: var(--accent); margin-bottom: 6px;
+    }
+    .doc-concept-body { font-size: 0.8rem; color: var(--text2); line-height: 1.55; }
+    .doc-concept-body strong { color: var(--text); }
+
+    .doc-steps { display: flex; flex-direction: column; gap: 12px; }
+    .doc-step {
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .doc-step-num {
+      flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+      background: var(--accent); color: #0d1117;
+      font-size: 0.75rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .doc-step-content { flex: 1; }
+    .doc-step-title { font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .doc-step-desc { font-size: 0.8rem; color: var(--text2); line-height: 1.5; }
+    .doc-step-desc strong { color: var(--text); }
+    .doc-step-desc code {
+      background: var(--surface2); padding: 1px 5px; border-radius: 3px;
+      font-size: .75rem; color: #79c0ff;
+    }
+
+    .doc-code-wrap { margin-top: 10px; }
+    .doc-code-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text2);
+      background: var(--surface2); border: 1px solid var(--border);
+      border-bottom: none; border-radius: 6px 6px 0 0;
+      padding: 4px 12px; display: inline-block;
+    }
+    .doc-code-wrap .doc-code { margin-top: 0; border-radius: 0 6px 6px 6px; }
+
+    .doc-error-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    .doc-error-table th {
+      background: var(--surface2); padding: 9px 14px; text-align: left;
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--text2);
+      border-bottom: 1px solid var(--border);
+    }
+    .doc-error-table td {
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      vertical-align: top; line-height: 1.5;
+    }
+    .doc-error-table tr:last-child td { border-bottom: none; }
+    .doc-error-table td:first-child { font-family: monospace; font-weight: 700; }
+    .doc-error-table td:nth-child(2) { color: var(--text2); }
+    .doc-error-table td:nth-child(3) { color: var(--green); font-size: 0.78rem; }
+    .error-4xx { color: var(--yellow); }
+    .error-5xx { color: var(--red); }
+    .error-2xx { color: var(--green); }
+
     /* ── Live panel ──────────────────────────────────── */
     .live-badge {
       display: inline-flex; align-items: center; gap: 6px;
@@ -1253,10 +1316,10 @@
   <div class="panel" id="panel-docs">
     <div class="panel-header">
       <h1>📖 Documentation</h1>
-      <p>A plain-language guide to every endpoint in this API — no prior experience required.</p>
+      <p>A complete guide for someone who has never built with an API before — from first concepts to running your first request.</p>
     </div>
 
-    <!-- What is this API -->
+    <!-- Quick overview -->
     <div class="doc-intro-grid">
       <div class="doc-intro-card">
         <div class="doc-intro-icon">🎙️</div>
@@ -1271,7 +1334,7 @@
       <div class="doc-intro-card">
         <div class="doc-intro-icon">📄</div>
         <div class="doc-intro-title">Document Analysis</div>
-        <div class="doc-intro-desc">Send a photo of an ID, passport or invoice, get back all the text fields extracted and structured as JSON.</div>
+        <div class="doc-intro-desc">Send a photo of an ID, passport or invoice, get back all text fields extracted and structured as JSON.</div>
       </div>
       <div class="doc-intro-card">
         <div class="doc-intro-icon">🗄️</div>
@@ -1280,25 +1343,232 @@
       </div>
     </div>
 
-    <!-- Authentication -->
+    <!-- ══ SECTION: Core concepts ══ -->
     <div class="doc-section">
-      <div class="card-title">🔐 Authentication — How to Access the API</div>
+      <div class="card-title" style="margin-bottom:14px">📚 Before You Start — Core Concepts</div>
+      <p style="font-size:.85rem;color:var(--text2);line-height:1.7;margin-bottom:16px">
+        If this is your first time working with an API, read this section first. Everything in this documentation will make much more sense once you understand these five ideas.
+      </p>
+      <div class="doc-concept-grid">
+
+        <div class="doc-concept-card">
+          <div class="doc-concept-icon">🍽️</div>
+          <div class="doc-concept-term">What is an API?</div>
+          <div class="doc-concept-body">
+            Think of a restaurant. You (the customer) don't go into the kitchen yourself — you talk to a <strong>waiter</strong> who takes your order to the kitchen and brings back your food. An API is that waiter. Your app makes a request, the API takes it to the right service, and brings back the result. You never touch the "kitchen" (Deepgram, OpenAI) directly.
+          </div>
+        </div>
+
+        <div class="doc-concept-card">
+          <div class="doc-concept-icon">📬</div>
+          <div class="doc-concept-term">What is HTTP?</div>
+          <div class="doc-concept-body">
+            HTTP is how computers send messages over the internet. Every request has a <strong>method</strong> (what you want to do) and a <strong>URL</strong> (where to send it).
+            <br><br>
+            <strong>POST</strong> = "I'm sending you something, please process it" (like uploading a file).
+            <br><strong>GET</strong> = "Give me some information" (like fetching logs).
+          </div>
+        </div>
+
+        <div class="doc-concept-card">
+          <div class="doc-concept-icon">📦</div>
+          <div class="doc-concept-term">What is JSON?</div>
+          <div class="doc-concept-body">
+            JSON is a standard text format for organizing data — like a very organized shopping list. Fields have names and values, separated by colons, wrapped in curly braces:
+            <br><br>
+            <code style="font-size:.74rem;background:var(--bg);padding:3px 6px;border-radius:4px;color:#79c0ff">{ "name": "David", "age": 30 }</code>
+            <br><br>
+            Every API response in this system is JSON — a structured object you can read or process with code.
+          </div>
+        </div>
+
+        <div class="doc-concept-card">
+          <div class="doc-concept-icon">🏷️</div>
+          <div class="doc-concept-term">What is a Header?</div>
+          <div class="doc-concept-body">
+            Headers are <strong>labels that travel with every request</strong>, invisible to the user but read by the server. Like writing your name and address on an envelope before mailing it — the package has the content, the envelope has the metadata.
+            <br><br>
+            This API uses a header called <strong>X-API-Key</strong> to verify your identity on every request.
+          </div>
+        </div>
+
+        <div class="doc-concept-card">
+          <div class="doc-concept-icon">📎</div>
+          <div class="doc-concept-term">Form Upload vs JSON Body</div>
+          <div class="doc-concept-body">
+            Two ways to send data to an API:
+            <br><br>
+            <strong>JSON body</strong> — plain text formatted as JSON. Used when sending simple values like text or numbers.
+            <br><br>
+            <strong>Form/multipart</strong> — used when attaching actual files (like audio or images). The same way a website form works when you upload a profile picture.
+          </div>
+        </div>
+
+        <div class="doc-concept-card">
+          <div class="doc-concept-icon">🔢</div>
+          <div class="doc-concept-term">What are Status Codes?</div>
+          <div class="doc-concept-body">
+            Every API response includes a 3-digit number telling you if it worked:
+            <br><br>
+            <strong>200</strong> = Success — everything worked.
+            <br><strong>401</strong> = Unauthorized — wrong or missing API key.
+            <br><strong>422</strong> = Bad request — you sent the wrong data format.
+            <br><strong>500</strong> = Server error — something broke on our end.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ SECTION: Authentication ══ -->
+    <div class="doc-section">
+      <div class="card-title">🔐 Authentication — How to Prove You Have Access</div>
       <div class="doc-auth-bar">
-        Every request to this API (except <strong>/health</strong>) requires an <strong>API Key</strong> sent in the HTTP header.<br><br>
-        Think of it like a password for the API. You include it in every request using a header called <strong>X-API-Key</strong>.<br><br>
-        <strong>Header name:</strong> <code style="background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px">X-API-Key</code><br>
+        <strong>Every request</strong> to this API (except <strong>/health</strong>) requires an API Key sent as a header.<br><br>
+        An API Key is a secret string that acts as your password. You include it on every single request so the server knows the request is legitimate and not from a random person on the internet.<br><br>
+        <strong>Header name:</strong> <code style="background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px">X-API-Key</code> &nbsp;
         <strong>Value:</strong> <code style="background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px">blackpool-architect-key-2024</code><br><br>
-        If you forget to include it or use the wrong value, the API returns <strong>401 Unauthorized</strong> and rejects the request.
-        On this site, the key is pre-filled in the 🔑 API Key field at the top — you don't need to type it manually.
+        If you forget to include it, or send the wrong value, the API immediately returns <strong>401 Unauthorized</strong> and does not process your request at all. On this website, the key is already pre-filled in the 🔑 field at the top — you never need to type it manually here.
       </div>
       <a class="doc-swagger-btn" href="/docs" target="_blank">
-        🔗 Open Interactive Swagger Docs (technical reference) ↗
+        🔗 Open Interactive Swagger Docs (full technical reference) ↗
       </a>
     </div>
 
-    <!-- STT -->
+    <!-- ══ SECTION: Quick Start ══ -->
     <div class="doc-section">
-      <div class="card-title" style="margin-bottom:14px">Endpoint 1 — Speech-to-Text</div>
+      <div class="card-title" style="margin-bottom:14px">🚀 Quick Start — Three Ways to Make Your First Request</div>
+
+      <div class="card" style="margin-bottom:14px">
+        <div class="doc-box-label" style="margin-bottom:14px">Option A — Use this website (no setup needed)</div>
+        <div class="doc-steps">
+          <div class="doc-step">
+            <div class="doc-step-num">1</div>
+            <div class="doc-step-content">
+              <div class="doc-step-title">Make sure the API key is set</div>
+              <div class="doc-step-desc">At the top of the page you'll see a 🔑 field. It should already say <code>blackpool-architect-key-2024</code>. If it's empty, type that value in.</div>
+            </div>
+          </div>
+          <div class="doc-step">
+            <div class="doc-step-num">2</div>
+            <div class="doc-step-content">
+              <div class="doc-step-title">Pick a feature from the sidebar</div>
+              <div class="doc-step-desc">Click the hamburger ☰ icon in the top left, then choose the feature you want to test: <strong>Speech-to-Text</strong>, <strong>Text-to-Speech</strong>, or <strong>Document Analysis</strong>.</div>
+            </div>
+          </div>
+          <div class="doc-step">
+            <div class="doc-step-num">3</div>
+            <div class="doc-step-content">
+              <div class="doc-step-title">Fill in the inputs and press the button</div>
+              <div class="doc-step-desc">For STT: upload an MP3 or WAV file. For TTS: type your text. For Document Analysis: upload a photo of a document. Then press the colored submit button. The result appears below it within a few seconds.</div>
+            </div>
+          </div>
+          <div class="doc-step">
+            <div class="doc-step-num">4</div>
+            <div class="doc-step-content">
+              <div class="doc-step-title">Read the output and the raw JSON</div>
+              <div class="doc-step-desc">The result displays in a formatted card. Click <strong>Show JSON</strong> to also see the exact data structure the API returned — this is what a developer's code would receive.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px">
+        <div class="doc-box-label" style="margin-bottom:12px">Option B — Use cURL (terminal command)</div>
+        <p style="font-size:.83rem;color:var(--text2);line-height:1.6;margin-bottom:12px">
+          cURL is a free command-line tool that comes pre-installed on Mac, Linux, and Windows 10+. Open your terminal (Command Prompt, PowerShell, or Terminal.app) and paste one of these commands. Replace <code>localhost:8000</code> with the actual server address if running remotely.
+        </p>
+        <div class="doc-code-wrap">
+          <div class="doc-code-label">Test the server is running (no key needed)</div>
+          <div class="doc-code">curl http://localhost:8000/health</div>
+        </div>
+        <div class="doc-code-wrap" style="margin-top:10px">
+          <div class="doc-code-label">Speech-to-Text — upload an audio file</div>
+          <div class="doc-code">curl -X POST http://localhost:8000/stt \
+  -H "X-API-Key: blackpool-architect-key-2024" \
+  -F "audio=@your-recording.mp3"</div>
+        </div>
+        <div class="doc-code-wrap" style="margin-top:10px">
+          <div class="doc-code-label">Text-to-Speech — convert text to audio (saves as output.mp3)</div>
+          <div class="doc-code">curl -X POST http://localhost:8000/tts \
+  -H "X-API-Key: blackpool-architect-key-2024" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Hello, this is a test.", "voice": "aura-2-asteria-en"}' \
+  --output output.mp3</div>
+        </div>
+        <div class="doc-code-wrap" style="margin-top:10px">
+          <div class="doc-code-label">Document Analysis — upload a document image</div>
+          <div class="doc-code">curl -X POST http://localhost:8000/idp/analyze \
+  -H "X-API-Key: blackpool-architect-key-2024" \
+  -F "image=@passport.jpg"</div>
+        </div>
+        <div class="doc-code-wrap" style="margin-top:10px">
+          <div class="doc-code-label">View request logs</div>
+          <div class="doc-code">curl http://localhost:8000/logs \
+  -H "X-API-Key: blackpool-architect-key-2024"</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="doc-box-label" style="margin-bottom:12px">Option C — Use Python (for developers)</div>
+        <p style="font-size:.83rem;color:var(--text2);line-height:1.6;margin-bottom:12px">
+          Install the requests library first: <code>pip install requests</code>. Then use the examples below. This is the most common way to integrate this API into a real application.
+        </p>
+        <div class="doc-code-wrap">
+          <div class="doc-code-label">Python — all 3 endpoints</div>
+          <div class="doc-code">import requests
+
+BASE = "http://localhost:8000"
+HEADERS = {"X-API-Key": "blackpool-architect-key-2024"}
+
+# ── Speech-to-Text ──────────────────────────────────────────────
+with open("recording.mp3", "rb") as audio_file:
+    response = requests.post(
+        f"{BASE}/stt",
+        headers=HEADERS,
+        files={"audio": audio_file}   # file upload, not JSON
+    )
+data = response.json()
+print("Transcript:", data["transcript"])
+print("Language:", data["language"])
+print("Duration:", data["duration"], "seconds")
+
+# ── Text-to-Speech ──────────────────────────────────────────────
+response = requests.post(
+    f"{BASE}/tts",
+    headers=HEADERS,
+    json={                            # JSON body
+        "text": "Hello! This is a test of the text to speech system.",
+        "voice": "aura-2-asteria-en"
+    }
+)
+with open("output.mp3", "wb") as f:  # save binary MP3 to disk
+    f.write(response.content)
+print("Audio saved to output.mp3")
+
+# ── Document Analysis ───────────────────────────────────────────
+with open("document.jpg", "rb") as image_file:
+    response = requests.post(
+        f"{BASE}/idp/analyze",
+        headers=HEADERS,
+        files={"image": image_file}   # file upload, not JSON
+    )
+data = response.json()
+print("Document type:", data["document_type"])
+print("Confidence:", data["confidence"])
+for field, value in data["extracted_fields"].items():
+    print(f"  {field}: {value}")</div>
+        </div>
+        <div class="doc-note" style="margin-top:12px">
+          <span class="doc-note-icon">💡</span>
+          <span>Notice the difference: <strong>STT and IDP</strong> use <code>files=</code> because they receive actual file uploads. <strong>TTS</strong> uses <code>json=</code> because it receives plain text data. Mixing these up is the most common beginner mistake.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION: Endpoint 1 STT ══ -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:14px">Endpoint 1 — Speech-to-Text (STT)</div>
       <div class="doc-endpoint-card">
         <div class="doc-endpoint-header">
           <span class="doc-method post">POST</span>
@@ -1306,9 +1576,10 @@
           <span class="doc-endpoint-title">Powered by Deepgram Nova-2</span>
         </div>
         <div class="doc-endpoint-body">
-          <p><strong>What it does:</strong> You upload an audio file (MP3 or WAV) and this endpoint sends it to Deepgram's Nova-2 speech recognition model. Nova-2 listens to the audio, converts every spoken word into text, figures out what language is being spoken, measures how long the audio is, and identifies which words were said by which speaker when multiple people are talking.</p>
 
-          <p><strong>When would you use it?</strong> Any time you have recorded audio that you need in text form — meeting recordings, voice memos, call center conversations, podcast transcripts, or voice commands in an app.</p>
+          <p><strong>What it does:</strong> You upload an audio file (MP3 or WAV). The server sends it to Deepgram's Nova-2 AI speech recognition model. Nova-2 listens to the entire recording, converts every spoken word to text, detects what language is being spoken automatically, measures how long the audio lasts, and figures out which voice belongs to which speaker when there are multiple people talking. You get back all of this as structured JSON.</p>
+
+          <p><strong>Real-world example:</strong> A company records all their customer support calls. Every night, they run those recordings through this endpoint to get transcripts, then search the transcripts for keywords like "cancel" or "refund" to identify at-risk customers — without anyone listening to the calls manually.</p>
 
           <div class="doc-flow">
             <div class="doc-flow-step">🎵 Your MP3/WAV file</div>
@@ -1317,50 +1588,93 @@
             <div class="doc-flow-arrow">→</div>
             <div class="doc-flow-step">☁️ Deepgram Nova-2</div>
             <div class="doc-flow-arrow">→</div>
-            <div class="doc-flow-step">📝 Transcript JSON</div>
+            <div class="doc-flow-step">📝 Transcript + speakers</div>
             <div class="doc-flow-arrow">→</div>
-            <div class="doc-flow-step">🗄️ Saved to DB</div>
+            <div class="doc-flow-step">🗄️ Logged to DB</div>
           </div>
 
-          <div class="doc-grid">
+          <div class="doc-grid" style="margin-top:16px">
             <div class="doc-box">
               <div class="doc-box-label">What you send</div>
               <ul>
-                <li><span><strong>audio</strong> — the file itself (MP3 or WAV, up to 25 MB). Sent as a form attachment, not JSON.</span></li>
-                <li><span><strong>X-API-Key</strong> — your API key in the header.</span></li>
+                <li><span><strong>audio</strong> — the file itself (MP3 or WAV, max 25 MB). This is sent as a <em>file attachment</em>, exactly like attaching a file to an email — not as JSON text.</span></li>
+                <li><span><strong>X-API-Key</strong> header — your key. Without this, the request is rejected before the file is even looked at.</span></li>
               </ul>
             </div>
             <div class="doc-box">
               <div class="doc-box-label">What you get back</div>
               <ul>
-                <li><span><strong>transcript</strong> — the full spoken text as a single string.</span></li>
-                <li><span><strong>language</strong> — auto-detected language code (e.g. <code>es</code> for Spanish, <code>en</code> for English).</span></li>
-                <li><span><strong>duration</strong> — length of the audio in seconds.</span></li>
-                <li><span><strong>speakers</strong> — list of segments, each with speaker ID, start time, end time, and what they said.</span></li>
+                <li><span><strong>transcript</strong> — all the spoken words, in order, as a single text string.</span></li>
+                <li><span><strong>language</strong> — the language code Deepgram detected: <code>en</code> (English), <code>es</code> (Spanish), <code>de</code> (German), etc.</span></li>
+                <li><span><strong>duration</strong> — how many seconds long the audio was.</span></li>
+                <li><span><strong>speakers</strong> — a list of segments. Each segment has a speaker number, start/end time in seconds, and the exact words that person said.</span></li>
               </ul>
             </div>
           </div>
 
-          <div class="doc-code">{
-  "transcript": "Hola, ¿cómo estás hoy?",
+          <div class="doc-code-wrap" style="margin-top:16px">
+            <div class="doc-code-label">Example response — two speakers in a Spanish conversation</div>
+            <div class="doc-code">{
+  "transcript": "Hola, ¿cómo estás hoy? Estoy bien, gracias.",
   "language": "es",
-  "duration": 3.42,
+  "duration": 5.20,
   "speakers": [
-    { "speaker": 0, "start": 0.0, "end": 3.42, "text": "Hola, ¿cómo estás hoy?" }
+    { "speaker": 0, "start": 0.0,  "end": 2.8,  "text": "Hola, ¿cómo estás hoy?" },
+    { "speaker": 1, "start": 3.1,  "end": 5.2,  "text": "Estoy bien, gracias." }
   ]
 }</div>
+          </div>
 
-          <div class="doc-note">
+          <div class="doc-note" style="margin-top:12px">
+            <span class="doc-note-icon">⚠️</span>
+            <span><strong>Speaker 0</strong> and <strong>Speaker 1</strong> are just labels — Deepgram doesn't know their names, only that they are different voices. In the example above, speaker 0 asked a question and speaker 1 replied.</span>
+          </div>
+
+          <div class="doc-note" style="margin-top:8px">
             <span class="doc-note-icon">💡</span>
-            <span>Deepgram charges per second of audio processed. The <strong>duration</strong> field in every response tells you exactly how many seconds were billed. This is tracked automatically in the database under <em>external_usage</em>.</span>
+            <span>Deepgram charges per second of audio. The <strong>duration</strong> field tells you exactly how many seconds were billed. This is automatically saved to the database under <em>external_usage → deepgram_duration_s</em>, so you can always audit costs later.</span>
+          </div>
+
+          <div style="margin-top:16px">
+            <div class="doc-box-label" style="margin-bottom:10px">How to use this on the website — step by step</div>
+            <div class="doc-steps">
+              <div class="doc-step">
+                <div class="doc-step-num">1</div>
+                <div class="doc-step-content">
+                  <div class="doc-step-title">Open the sidebar and choose "Speech-to-Text"</div>
+                  <div class="doc-step-desc">Click the ☰ hamburger icon in the top-left, then click "🎙️ Speech-to-Text". The STT panel appears.</div>
+                </div>
+              </div>
+              <div class="doc-step">
+                <div class="doc-step-num">2</div>
+                <div class="doc-step-content">
+                  <div class="doc-step-title">Click the upload zone and choose your audio file</div>
+                  <div class="doc-step-desc">Click the dotted rectangle labeled "Drag and drop". A file picker opens. Choose any MP3 or WAV file from your computer. The file name will appear confirming the selection.</div>
+                </div>
+              </div>
+              <div class="doc-step">
+                <div class="doc-step-num">3</div>
+                <div class="doc-step-content">
+                  <div class="doc-step-title">Press "Transcribe Audio"</div>
+                  <div class="doc-step-desc">The button becomes active. Press it. A loading spinner appears — the file is being uploaded and Deepgram is processing it. This usually takes 2–10 seconds depending on the audio length.</div>
+                </div>
+              </div>
+              <div class="doc-step">
+                <div class="doc-step-num">4</div>
+                <div class="doc-step-content">
+                  <div class="doc-step-title">Read the results</div>
+                  <div class="doc-step-desc">Three boxes appear: the <strong>transcript text</strong>, the <strong>language and duration</strong>, and the <strong>speaker breakdown</strong> (who said what and when). Click "Show JSON" to see the raw data structure.</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- TTS -->
+    <!-- ══ SECTION: Endpoint 2 TTS ══ -->
     <div class="doc-section">
-      <div class="card-title" style="margin-bottom:14px">Endpoint 2 — Text-to-Speech</div>
+      <div class="card-title" style="margin-bottom:14px">Endpoint 2 — Text-to-Speech (TTS)</div>
       <div class="doc-endpoint-card">
         <div class="doc-endpoint-header">
           <span class="doc-method post">POST</span>
@@ -1368,99 +1682,146 @@
           <span class="doc-endpoint-title">Powered by Deepgram Aura-2</span>
         </div>
         <div class="doc-endpoint-body">
-          <p><strong>What it does:</strong> You send a piece of text and the name of a voice, and this endpoint sends it to Deepgram's Aura-2 text-to-speech model. Aura-2 reads your text aloud using the voice you chose and returns an MP3 audio file you can play or download immediately.</p>
 
-          <p><strong>When would you use it?</strong> Giving your app a voice — reading notifications aloud, creating audio versions of articles, building voice assistants, generating voiceovers for videos, or making accessibility features for visually impaired users.</p>
+          <p><strong>What it does:</strong> You send a piece of text (in any of 7 supported languages) and choose an AI voice. The server sends it to Deepgram's Aura-2 text-to-speech model, which reads your text aloud in that voice, and returns the resulting audio as an MP3 file you can play directly or download.</p>
+
+          <p><strong>Real-world example:</strong> A navigation app reads turn-by-turn directions aloud. An e-commerce site reads product descriptions for visually impaired users. A podcast platform converts written articles into audio episodes automatically. A bank IVR system speaks account balances to customers over the phone.</p>
 
           <div class="doc-flow">
-            <div class="doc-flow-step">✍️ Your text + voice</div>
+            <div class="doc-flow-step">✍️ Your text + voice choice</div>
             <div class="doc-flow-arrow">→</div>
             <div class="doc-flow-step">🔐 API Key check</div>
             <div class="doc-flow-arrow">→</div>
             <div class="doc-flow-step">☁️ Deepgram Aura-2</div>
             <div class="doc-flow-arrow">→</div>
-            <div class="doc-flow-step">🎧 MP3 audio file</div>
+            <div class="doc-flow-step">🎧 Binary MP3 audio</div>
             <div class="doc-flow-arrow">→</div>
-            <div class="doc-flow-step">🗄️ Saved to DB</div>
+            <div class="doc-flow-step">🗄️ Logged to DB</div>
           </div>
 
-          <div class="doc-grid">
+          <div class="doc-grid" style="margin-top:16px">
             <div class="doc-box">
               <div class="doc-box-label">What you send (JSON body)</div>
               <ul>
-                <li><span><strong>text</strong> — the words you want spoken (1–2000 characters).</span></li>
-                <li><span><strong>voice</strong> — (optional) which AI voice to use. Defaults to <code>aura-2-asteria-en</code>. Supports 7 languages with 80+ voices total.</span></li>
+                <li><span><strong>text</strong> — the words to be spoken. Can be 1 character to 2,000 characters. Supports any language in the Aura-2 voice list.</span></li>
+                <li><span><strong>voice</strong> — (optional) the voice ID to use. Example: <code>aura-2-asteria-en</code>. If you omit this field, the API uses Asteria (English female) as the default. The full list of 80+ voices covers English, Spanish, German, Dutch, Italian, French, and Japanese.</span></li>
               </ul>
             </div>
             <div class="doc-box">
               <div class="doc-box-label">What you get back</div>
               <ul>
-                <li><span><strong>audio/mpeg file</strong> — the raw MP3 audio. Your browser plays it directly, or you can download it.</span></li>
-                <li><span>The response is binary audio data, not JSON. The player on this site handles it automatically.</span></li>
+                <li><span><strong>audio/mpeg binary file</strong> — raw MP3 audio bytes. This is NOT JSON text — it is binary audio data that your browser can play directly or that code can save to a .mp3 file.</span></li>
+                <li><span>On this website, the audio player appears automatically and starts playing the result immediately after the request finishes.</span></li>
               </ul>
             </div>
           </div>
 
-          <div class="doc-code">{
-  "text": "Welcome to Blackpool Assessment. How can I help you today?",
-  "voice": "aura-2-asteria-en"
+          <div class="doc-code-wrap" style="margin-top:16px">
+            <div class="doc-code-label">Example request body (JSON)</div>
+            <div class="doc-code">{
+  "text": "Bienvenido a Blackpool. ¿En qué puedo ayudarte hoy?",
+  "voice": "aura-2-andromeda-es"   ← Spanish female voice
 }
-// Response: binary MP3 file (audio/mpeg)</div>
+// Response: binary MP3 data (not JSON)</div>
+          </div>
 
-          <div class="doc-note">
+          <div class="doc-note" style="margin-top:12px">
+            <span class="doc-note-icon">🌍</span>
+            <span><strong>Language auto-detection:</strong> On this website, as you type in the text box, the system automatically detects which language you are writing and filters the voice dropdown to only show voices that speak that language. This prevents selecting an English voice and making it try to read Spanish text.</span>
+          </div>
+
+          <div class="doc-note" style="margin-top:8px">
             <span class="doc-note-icon">💡</span>
-            <span>Deepgram Aura-2 charges per character synthesized. The longer your text, the more it costs. The number of characters is tracked automatically in <em>external_usage</em> as <code>chars_synthesized</code>. This site auto-detects the language of your text and only shows you voices that speak that language.</span>
+            <span>Deepgram Aura-2 charges per <strong>character</strong> of text synthesized (including spaces). The exact character count is tracked in every database log entry under <em>external_usage → chars_synthesized</em>.</span>
+          </div>
+
+          <div style="margin-top:16px">
+            <div class="doc-box-label" style="margin-bottom:10px">How to use this on the website — step by step</div>
+            <div class="doc-steps">
+              <div class="doc-step">
+                <div class="doc-step-num">1</div>
+                <div class="doc-step-content">
+                  <div class="doc-step-title">Open the sidebar and choose "Text-to-Speech"</div>
+                  <div class="doc-step-desc">Click ☰ then "🔊 Text-to-Speech".</div>
+                </div>
+              </div>
+              <div class="doc-step">
+                <div class="doc-step-num">2</div>
+                <div class="doc-step-content">
+                  <div class="doc-step-title">Type or paste your text</div>
+                  <div class="doc-step-desc">Click the text area labeled "Type the text to speak here…" and write your message. As you type, the language detector reads what you wrote and automatically updates the voice list below.</div>
+                </div>
+              </div>
+              <div class="doc-step">
+                <div class="doc-step-num">3</div>
+                <div class="doc-step-content">
+                  <div class="doc-step-title">Choose a voice (optional)</div>
+                  <div class="doc-step-desc">The voice dropdown now shows only voices for your detected language. You can leave it on the default or try a different voice — each has a different name and sound character (Asteria, Orion, Luna, etc.).</div>
+                </div>
+              </div>
+              <div class="doc-step">
+                <div class="doc-step-num">4</div>
+                <div class="doc-step-content">
+                  <div class="doc-step-title">Press "Generate Audio" and listen</div>
+                  <div class="doc-step-desc">The server processes your request. An audio player appears and starts playing automatically. You can also download the MP3 using your browser's right-click menu on the player.</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- IDP -->
+    <!-- ══ SECTION: Endpoint 3 IDP ══ -->
     <div class="doc-section">
-      <div class="card-title" style="margin-bottom:14px">Endpoint 3 — Intelligent Document Processing</div>
+      <div class="card-title" style="margin-bottom:14px">Endpoint 3 — Intelligent Document Processing (IDP)</div>
       <div class="doc-endpoint-card">
         <div class="doc-endpoint-header">
           <span class="doc-method post">POST</span>
           <span class="doc-path">/idp/analyze</span>
-          <span class="doc-endpoint-title">Powered by OpenAI GPT-4o Vision</span>
+          <span class="doc-endpoint-title">Powered by Azure OpenAI GPT-4o Vision</span>
         </div>
         <div class="doc-endpoint-body">
-          <p><strong>What it does:</strong> You upload a photo or scan of a document (ID card, passport, invoice, receipt, driver's license — anything with text on it). This endpoint sends the image to OpenAI's GPT-4o model, which looks at it like a human would, identifies what type of document it is, reads every visible field, and returns all the information structured as clean JSON. It also draws colored boxes on the image to show exactly where it found each piece of information.</p>
 
-          <p><strong>When would you use it?</strong> Automating data entry from scanned documents, verifying identity documents in onboarding flows, extracting invoice data for accounting systems, digitizing paper records, or any scenario where humans currently read documents and type the information into a system.</p>
+          <p><strong>What it does:</strong> You upload a photo or scan of any document — an ID card, passport, driver's license, invoice, receipt, or even a handwritten form. The server sends the image to OpenAI's GPT-4o Vision model, which looks at the image like a human reader would, identifies what type of document it is, reads every visible text field, and returns all the extracted data organized as clean JSON. It also calculates where on the image it found each field (bounding boxes), which is used to draw colored annotation boxes on the document image in this website.</p>
+
+          <p><strong>Real-world example:</strong> A bank uses this to process ID verification during new account opening — a customer photographs their ID, this endpoint extracts the name, date of birth, ID number, and expiry date automatically, and the bank's system pre-fills the application form without anyone typing. What used to take 3 minutes of manual data entry takes 2 seconds.</p>
 
           <div class="doc-flow">
-            <div class="doc-flow-step">🖼️ Photo of document</div>
+            <div class="doc-flow-step">🖼️ Document photo</div>
             <div class="doc-flow-arrow">→</div>
             <div class="doc-flow-step">🔐 API Key check</div>
             <div class="doc-flow-arrow">→</div>
             <div class="doc-flow-step">☁️ GPT-4o Vision</div>
             <div class="doc-flow-arrow">→</div>
-            <div class="doc-flow-step">📋 Structured JSON</div>
+            <div class="doc-flow-step">📋 Fields + bounding boxes</div>
             <div class="doc-flow-arrow">→</div>
-            <div class="doc-flow-step">🗄️ Saved to DB</div>
+            <div class="doc-flow-step">🗄️ Logged to DB</div>
           </div>
 
-          <div class="doc-grid">
+          <div class="doc-grid" style="margin-top:16px">
             <div class="doc-box">
               <div class="doc-box-label">What you send</div>
               <ul>
-                <li><span><strong>image</strong> — the document photo (JPG or PNG only, max 10 MB). Sent as a form attachment.</span></li>
-                <li><span><strong>X-API-Key</strong> — your API key in the header.</span></li>
+                <li><span><strong>image</strong> — the document photo (JPG or PNG only, max 10 MB). Must be a real file upload — not a URL, not base64 text. Just the file itself.</span></li>
+                <li><span><strong>X-API-Key</strong> header — your key.</span></li>
+                <li><span>The image quality matters: blurry, dark, or heavily cropped images will reduce confidence and may miss fields. A clear, flat-angle photo in good lighting gives the best results.</span></li>
               </ul>
             </div>
             <div class="doc-box">
               <div class="doc-box-label">What you get back</div>
               <ul>
-                <li><span><strong>document_type</strong> — what kind of document it is (e.g. "National ID Card", "Passport").</span></li>
-                <li><span><strong>extracted_fields</strong> — every visible field as key/value pairs (name, ID number, expiry date, etc.).</span></li>
-                <li><span><strong>annotations</strong> — bounding boxes showing where on the image each field was found (used to draw the colored overlays you see on screen).</span></li>
-                <li><span><strong>confidence</strong> — how certain the model is: <code>high</code>, <code>medium</code>, or <code>low</code>.</span></li>
+                <li><span><strong>document_type</strong> — what the model identified the document as (e.g. "Passport", "National ID Card", "Driver's License", "Invoice").</span></li>
+                <li><span><strong>extracted_fields</strong> — every readable field as a name/value pair. The field names adapt to the document type (a passport has "passport_number"; an invoice has "total_amount").</span></li>
+                <li><span><strong>annotations</strong> — for each field, the approximate location on the image as four numbers [x1, y1, x2, y2] ranging 0.0 to 1.0. These are fractions of the image size, not pixel coordinates. Used to draw the colored boxes on screen.</span></li>
+                <li><span><strong>confidence</strong> — <code>high</code> (model is certain), <code>medium</code> (some fields may be uncertain), or <code>low</code> (blurry image or unusual document — verify manually).</span></li>
               </ul>
             </div>
           </div>
 
-          <div class="doc-code">{
+          <div class="doc-code-wrap" style="margin-top:16px">
+            <div class="doc-code-label">Example response — Colombian passport</div>
+            <div class="doc-code">{
   "document_type": "Passport",
   "confidence": "high",
   "extracted_fields": {
@@ -1469,58 +1830,124 @@
     "nationality": "COLOMBIANA",
     "date_of_birth": "20 MAY 1982",
     "passport_number": "CB007001",
-    "place_of_issue": "G. ANTIOQUIA"
+    "expiry_date": "15 NOV 2030"
+  },
+  "annotations": {
+    "surname":         { "value": "RODRIGUEZ",      "bbox": [0.1, 0.38, 0.6, 0.45] },
+    "given_names":     { "value": "CLAUDIA MARCELA","bbox": [0.1, 0.46, 0.75,0.53] },
+    "passport_number": { "value": "CB007001",        "bbox": [0.6, 0.12, 0.95,0.20] }
   }
 }</div>
+          </div>
 
-          <div class="doc-note">
+          <div class="doc-note" style="margin-top:12px">
+            <span class="doc-note-icon">🎯</span>
+            <span><strong>What are bounding boxes?</strong> Each <code>bbox</code> is <code>[x1, y1, x2, y2]</code> — the left, top, right, and bottom edges of a rectangle around the field on the image. All values are between 0.0 (left/top edge) and 1.0 (right/bottom edge). On this website, these coordinates are used to draw the colored annotation boxes you see overlaid on the document image when you zoom in.</span>
+          </div>
+
+          <div class="doc-note" style="margin-top:8px">
             <span class="doc-note-icon">💡</span>
-            <span>OpenAI GPT-4o charges per token — tokens are roughly pieces of words in both what you send (the image + instructions) and what you receive (the JSON). A typical document analysis costs around 400–500 prompt tokens + 200–400 completion tokens. The exact token counts are tracked in <em>external_usage</em> on every request.</span>
+            <span>OpenAI GPT-4o charges per <strong>token</strong> — roughly, pieces of words. A typical document analysis uses 400–600 prompt tokens (the image + instructions sent to the model) and 200–400 completion tokens (the JSON it writes back). Token counts are tracked under <em>external_usage</em> in every database log entry.</span>
+          </div>
+
+          <div style="margin-top:16px">
+            <div class="doc-box-label" style="margin-bottom:10px">How to use this on the website — step by step</div>
+            <div class="doc-steps">
+              <div class="doc-step">
+                <div class="doc-step-num">1</div>
+                <div class="doc-step-content">
+                  <div class="doc-step-title">Open the sidebar and choose "Document Analysis"</div>
+                  <div class="doc-step-desc">Click ☰ then "📄 Document Analysis".</div>
+                </div>
+              </div>
+              <div class="doc-step">
+                <div class="doc-step-num">2</div>
+                <div class="doc-step-content">
+                  <div class="doc-step-title">Click the upload zone and choose a document image</div>
+                  <div class="doc-step-desc">JPG or PNG files only. A good test: photograph any ID card, business card, or receipt lying nearby. The clearer the photo, the better the extraction.</div>
+                </div>
+              </div>
+              <div class="doc-step">
+                <div class="doc-step-num">3</div>
+                <div class="doc-step-content">
+                  <div class="doc-step-title">Press "Analyze Document" and wait</div>
+                  <div class="doc-step-desc">This request takes 3–8 seconds because GPT-4o processes both the image and generates the structured JSON response. A loading spinner shows while it works.</div>
+                </div>
+              </div>
+              <div class="doc-step">
+                <div class="doc-step-num">4</div>
+                <div class="doc-step-content">
+                  <div class="doc-step-title">Read the results and hover over the table rows</div>
+                  <div class="doc-step-desc">The extracted fields appear in a table. The document image appears below with colored boxes drawn over each field location. <strong>Hover over any table row</strong> to highlight that specific field's box on the image. Click the image to zoom it in a lightbox.</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Logs -->
+    <!-- ══ SECTION: Endpoint 4 Logs ══ -->
     <div class="doc-section">
       <div class="card-title" style="margin-bottom:14px">Endpoint 4 — Request Logs</div>
       <div class="doc-endpoint-card">
         <div class="doc-endpoint-header">
           <span class="doc-method get">GET</span>
           <span class="doc-path">/logs</span>
-          <span class="doc-endpoint-title">PostgreSQL tracking</span>
+          <span class="doc-endpoint-title">PostgreSQL — full request history</span>
         </div>
         <div class="doc-endpoint-body">
-          <p><strong>What it does:</strong> Returns the full history of every API call made through this system, pulled directly from the PostgreSQL database. Each record includes when the request happened, which endpoint was called, what was sent in, what came out, how long it took, and how much of each external service was used.</p>
 
-          <p><strong>When would you use it?</strong> Auditing API usage, monitoring costs, debugging issues, generating usage reports, or proving to stakeholders that the system is working correctly.</p>
+          <p><strong>What it does:</strong> Returns the full history of every API call made through this system, read directly from the PostgreSQL database. Each record answers the questions: when did it happen, which feature was used, what data was sent in, what came out, how long it took, and how much of each external paid service (Deepgram, OpenAI) was consumed.</p>
+
+          <p><strong>Why does this exist?</strong> Every system that calls paid external AI services needs to track its own usage. Without this, you couldn't answer questions like: "How many seconds of audio did we transcribe this month?", "Which request took 12 seconds to respond?", or "Did the 3pm request yesterday fail or succeed?"</p>
 
           <div class="doc-grid">
             <div class="doc-box">
               <div class="doc-box-label">What you send</div>
               <ul>
-                <li><span><strong>X-API-Key</strong> — required in the header.</span></li>
-                <li><span><strong>limit</strong> — (optional, URL param) max rows to return. Default: 100.</span></li>
+                <li><span><strong>X-API-Key</strong> header — required. Even viewing logs requires authentication.</span></li>
+                <li><span><strong>?limit=N</strong> — optional URL parameter to control how many records come back. Example: <code>/logs?limit=10</code> returns the 10 most recent requests. Default: 100.</span></li>
               </ul>
             </div>
             <div class="doc-box">
-              <div class="doc-box-label">Fields returned per record</div>
+              <div class="doc-box-label">Fields returned per record — what they mean</div>
               <ul>
-                <li><span><strong>timestamp</strong> — exact date/time of the request (UTC).</span></li>
-                <li><span><strong>endpoint</strong> — which service was called (/stt, /tts, /idp/analyze).</span></li>
-                <li><span><strong>input_data</strong> — what was sent (filename or text snippet).</span></li>
-                <li><span><strong>output_ref</strong> — what came back (transcript, audio size, or extracted fields).</span></li>
-                <li><span><strong>external_usage</strong> — tokens used, audio duration, or characters synthesized.</span></li>
-                <li><span><strong>latency_ms</strong> — total time from request to response in milliseconds.</span></li>
-                <li><span><strong>http_status</strong> — 200 = success, 4xx = client error, 5xx = server error.</span></li>
+                <li><span><strong>id</strong> — unique row number in the database.</span></li>
+                <li><span><strong>timestamp</strong> — exact date and time the request happened (UTC timezone).</span></li>
+                <li><span><strong>endpoint</strong> — which feature was called: <code>/stt</code>, <code>/tts</code>, or <code>/idp/analyze</code>.</span></li>
+                <li><span><strong>input_data</strong> — a summary of what was sent in (filename for audio/image, text snippet for TTS).</span></li>
+                <li><span><strong>output_ref</strong> — a summary of what came back (transcript preview, audio size, field count).</span></li>
+                <li><span><strong>external_usage</strong> — exactly how much of the paid external service was used: seconds of audio for STT, characters for TTS, tokens for IDP.</span></li>
+                <li><span><strong>latency_ms</strong> — how many milliseconds the full request took, from the moment it arrived to the moment the response was sent.</span></li>
+                <li><span><strong>http_status</strong> — 200 means success. 422 means bad input. 500 means something went wrong internally.</span></li>
               </ul>
             </div>
+          </div>
+
+          <div class="doc-code-wrap" style="margin-top:14px">
+            <div class="doc-code-label">Example single log record</div>
+            <div class="doc-code">{
+  "id": 42,
+  "timestamp": "2024-12-15T14:32:07.123456",
+  "endpoint": "/stt",
+  "input_data": "meeting_recording.mp3",
+  "output_ref": "transcript_preview: 'Good afternoon everyone, let's...'",
+  "external_usage": { "deepgram_duration_s": 187.4 },
+  "latency_ms": 3240.5,
+  "http_status": 200
+}</div>
+          </div>
+
+          <div class="doc-note" style="margin-top:12px">
+            <span class="doc-note-icon">💡</span>
+            <span>You can also view this data visually on the <strong>Database</strong> panel in the sidebar — it shows a summary card plus a full sortable table with all the same fields, without needing to read raw JSON.</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Health -->
+    <!-- ══ SECTION: Endpoint 5 Health ══ -->
     <div class="doc-section">
       <div class="card-title" style="margin-bottom:14px">Endpoint 5 — Health Check</div>
       <div class="doc-endpoint-card">
@@ -1530,11 +1957,81 @@
           <span class="doc-endpoint-title">No authentication required</span>
         </div>
         <div class="doc-endpoint-body">
-          <p><strong>What it does:</strong> A simple "is the server running?" check. Returns a small JSON object confirming the API is online and what version it is. This endpoint is intentionally public — no API key required — because it needs to be reachable by monitoring tools and CI/CD pipelines that check whether the deployment succeeded.</p>
-          <div class="doc-code">GET /health
-// Response:
-{ "status": "ok", "version": "1.0.0" }</div>
+
+          <p><strong>What it does:</strong> A minimal "is the server online?" check. It returns a tiny JSON object with two fields: the current status ("ok") and the API version. That's it — no database queries, no AI calls, no authentication.</p>
+
+          <p><strong>Why does this exist?</strong> Every professionally deployed service needs a health endpoint. It's used by: deployment pipelines (to verify a new version started successfully), load balancers (to stop routing traffic to a crashed instance), uptime monitors (to alert on-call staff if the service goes down), and container orchestrators like Kubernetes (to decide whether to restart a pod).</p>
+
+          <p><strong>Why no API key?</strong> Health checks need to work even if the authentication system is broken. An uptime monitor needs to know whether the server is <em>reachable at all</em> — requiring a key would prevent that check from working if key validation itself has a bug.</p>
+
+          <div class="doc-code-wrap">
+            <div class="doc-code-label">Request</div>
+            <div class="doc-code">GET http://localhost:8000/health
+# No headers required</div>
+          </div>
+          <div class="doc-code-wrap" style="margin-top:8px">
+            <div class="doc-code-label">Response</div>
+            <div class="doc-code">{ "status": "ok", "version": "1.0.0" }</div>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION: Common Errors ══ -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:14px">⚠️ Common Errors and What They Mean</div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <table class="doc-error-table">
+          <thead>
+            <tr>
+              <th style="width:80px">Code</th>
+              <th>What it means</th>
+              <th>How to fix it</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="error-2xx">200 OK</td>
+              <td>The request worked. The response body contains your result.</td>
+              <td>Nothing to fix — read the response JSON or play the audio.</td>
+            </tr>
+            <tr>
+              <td class="error-4xx">401</td>
+              <td><strong>Unauthorized</strong> — the X-API-Key header is missing or the key value is wrong.</td>
+              <td>Add the header <code>X-API-Key: blackpool-architect-key-2024</code> to your request. On this website, check the 🔑 field at the top.</td>
+            </tr>
+            <tr>
+              <td class="error-4xx">404</td>
+              <td><strong>Not Found</strong> — you requested a URL path that doesn't exist.</td>
+              <td>Check the endpoint path. Common mistake: typing <code>/transcribe</code> instead of <code>/stt</code>, or missing a slash.</td>
+            </tr>
+            <tr>
+              <td class="error-4xx">405</td>
+              <td><strong>Method Not Allowed</strong> — you used GET on an endpoint that only accepts POST, or vice versa.</td>
+              <td>STT, TTS, and IDP all require POST. Health and Logs require GET. Use the correct HTTP method.</td>
+            </tr>
+            <tr>
+              <td class="error-4xx">422</td>
+              <td><strong>Unprocessable Entity</strong> — the server understood your request but the data you sent is in the wrong format.</td>
+              <td>Common causes: sending a JSON body when a file upload is expected (or vice versa), sending a PNG when only JPG is accepted, or omitting a required field. Check the "What you send" section for the endpoint you're calling.</td>
+            </tr>
+            <tr>
+              <td class="error-5xx">500</td>
+              <td><strong>Internal Server Error</strong> — something went wrong inside the server after it accepted your request.</td>
+              <td>Could be a bug in the code, a timeout from Deepgram or OpenAI, or a database connection issue. Check the server logs. The request is still recorded in the database with <code>http_status: 500</code>.</td>
+            </tr>
+            <tr>
+              <td class="error-5xx">503</td>
+              <td><strong>Service Unavailable</strong> — the server is overloaded or an external dependency (Deepgram, OpenAI) is down.</td>
+              <td>Wait a few seconds and retry. If the error persists, check the health endpoint first (<code>GET /health</code>). If that also fails, the server itself is down.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="doc-note" style="margin-top:14px">
+        <span class="doc-note-icon">🔍</span>
+        <span>Every response from this API includes the status code in the HTTP headers. When using cURL, add <code>-i</code> to your command to see the full headers including the status code. Example: <code>curl -i http://localhost:8000/health</code></span>
       </div>
     </div>
 
