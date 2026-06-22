@@ -448,6 +448,165 @@
     .db-stat-value { font-size: 1.4rem; font-weight: 700; color: var(--text); }
     .db-stat-sub { font-size: 0.72rem; color: var(--text2); margin-top: 2px; }
 
+    /* ── Documentation panel ─────────────────────────── */
+    .doc-section { margin-bottom: 32px; }
+    .doc-section:last-child { margin-bottom: 0; }
+
+    .doc-endpoint-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 20px;
+    }
+    .doc-endpoint-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px; background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .doc-method {
+      font-size: 0.72rem; font-weight: 700; padding: 4px 10px;
+      border-radius: 5px; letter-spacing: 0.05em;
+    }
+    .doc-method.post { background: rgba(63,185,80,0.2); color: var(--green); }
+    .doc-method.get  { background: rgba(88,166,255,0.2); color: var(--accent); }
+    .doc-path { font-family: monospace; font-size: 0.95rem; color: var(--text); font-weight: 600; }
+    .doc-endpoint-title { font-size: 0.82rem; color: var(--text2); margin-left: auto; }
+
+    .doc-endpoint-body { padding: 20px; }
+    .doc-endpoint-body p { font-size: 0.88rem; line-height: 1.7; color: var(--text2); margin-bottom: 14px; }
+    .doc-endpoint-body p:last-child { margin-bottom: 0; }
+    .doc-endpoint-body strong { color: var(--text); }
+
+    .doc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    @media (max-width: 560px) { .doc-grid { grid-template-columns: 1fr; } }
+
+    .doc-box {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px 16px;
+    }
+    .doc-box-label {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--text2); margin-bottom: 10px;
+    }
+    .doc-box ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .doc-box li { font-size: 0.83rem; display: flex; gap: 8px; }
+    .doc-box li::before { content: "→"; color: var(--accent); flex-shrink: 0; }
+    .doc-box li span { color: var(--text2); line-height: 1.4; }
+    .doc-box li strong { color: var(--text); }
+
+    .doc-flow {
+      display: flex; align-items: center; flex-wrap: wrap;
+      gap: 8px; margin-top: 14px;
+    }
+    .doc-flow-step {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 6px; padding: 6px 12px;
+      font-size: 0.78rem; color: var(--text2);
+    }
+    .doc-flow-arrow { color: var(--accent); font-size: 1rem; }
+
+    .doc-note {
+      display: flex; gap: 10px; align-items: flex-start;
+      background: rgba(88,166,255,0.08); border: 1px solid rgba(88,166,255,0.25);
+      border-radius: 8px; padding: 12px 14px; margin-top: 14px;
+      font-size: 0.83rem; color: var(--text2); line-height: 1.5;
+    }
+    .doc-note-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    .doc-code {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 6px; padding: 10px 14px; margin-top: 10px;
+      font-family: monospace; font-size: 0.78rem; color: #79c0ff;
+      white-space: pre; overflow-x: auto; line-height: 1.6;
+    }
+
+    .doc-intro-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+      gap: 12px; margin-bottom: 28px;
+    }
+    .doc-intro-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px;
+    }
+    .doc-intro-icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .doc-intro-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 4px; }
+    .doc-intro-desc { font-size: 0.78rem; color: var(--text2); line-height: 1.4; }
+
+    .doc-auth-bar {
+      background: rgba(210,153,34,0.1); border: 1px solid rgba(210,153,34,0.35);
+      border-radius: 8px; padding: 14px 18px; margin-bottom: 24px;
+      font-size: 0.85rem; line-height: 1.6;
+    }
+    .doc-auth-bar strong { color: var(--yellow); }
+    .doc-swagger-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text2); text-decoration: none; padding: 8px 16px;
+      border-radius: 8px; font-size: 0.83rem; cursor: pointer;
+      transition: color .15s, border-color .15s;
+    }
+    .doc-swagger-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ── Live panel ──────────────────────────────────── */
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(248,81,73,0.15); border: 1px solid rgba(248,81,73,0.4);
+      color: var(--red); border-radius: 20px; padding: 4px 12px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em;
+    }
+    .live-pulse {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--red);
+      animation: pulse-dot 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: .4; transform: scale(.7); }
+    }
+    .compare-table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+    .compare-table th {
+      background: var(--surface2); padding: 12px 16px;
+      font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--text2); text-align: left;
+    }
+    .compare-table th:first-child { border-right: 1px solid var(--border); }
+    .compare-table td {
+      padding: 12px 16px; font-size: 0.85rem;
+      border-top: 1px solid var(--border); vertical-align: top; line-height: 1.5;
+    }
+    .compare-table td:first-child { border-right: 1px solid var(--border); color: var(--text2); font-weight: 500; }
+    .compare-table tr:hover td { background: rgba(88,166,255,0.04); }
+    .tag-prerecorded { color: var(--accent); font-weight: 600; }
+    .tag-live { color: var(--red); font-weight: 600; }
+
+    .timeline {
+      display: flex; flex-direction: column; gap: 0;
+      border-left: 2px solid var(--border); margin-left: 10px; padding-left: 20px;
+      margin-top: 16px;
+    }
+    .timeline-item {
+      position: relative; padding-bottom: 20px;
+    }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-dot {
+      position: absolute; left: -27px; top: 3px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--accent); border: 2px solid var(--bg);
+    }
+    .timeline-title { font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .timeline-desc { font-size: 0.82rem; color: var(--text2); line-height: 1.5; }
+
+    .design-change-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px; margin-bottom: 12px;
+    }
+    .design-change-card .change-label {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; margin-bottom: 8px;
+    }
+    .change-label.remove { color: var(--red); }
+    .change-label.add    { color: var(--green); }
+    .change-label.modify { color: var(--yellow); }
+    .design-change-card p { font-size: 0.85rem; color: var(--text2); line-height: 1.5; margin: 0; }
+    .design-change-card strong { color: var(--text); }
+
     /* Language detection banner */
     .lang-banner {
       display: none; align-items: center; gap: 10px;
@@ -530,6 +689,12 @@
     </a>
     <a onclick="showPanel('db')" id="nav-db">
       <span class="icon">🗄️</span> Database
+    </a>
+    <a onclick="showPanel('docs')" id="nav-docs">
+      <span class="icon">📖</span> Documentation
+    </a>
+    <a onclick="showPanel('live')" id="nav-live">
+      <span class="icon">🔴</span> Live Streaming
     </a>
   </nav>
   <div class="sidebar-footer">Powered by Deepgram &amp; OpenAI</div>
@@ -749,6 +914,503 @@
         </table>
       </div>
     </div>
+  </div>
+
+  <!-- ── Live Streaming Panel ── -->
+  <div class="panel" id="panel-live">
+    <div class="panel-header">
+      <h1>🔴 Live Streaming STT</h1>
+      <p>A deep-dive into Deepgram's real-time transcription mode — what it is, how it works, and how the system design would change.</p>
+    </div>
+
+    <!-- What we built vs what live is -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:16px">What We Built vs What Live Streaming Is</div>
+
+      <div class="card" style="margin-bottom:16px">
+        <p style="font-size:.88rem;line-height:1.7;color:var(--text2);margin-bottom:12px">
+          The current <strong style="color:var(--text)">POST /stt</strong> endpoint uses Deepgram's
+          <strong style="color:var(--accent)">pre-recorded</strong> mode: you upload a complete audio file,
+          wait for it to be fully processed, and receive the entire transcript in one response.
+          This is perfect for processing existing recordings.
+        </p>
+        <p style="font-size:.88rem;line-height:1.7;color:var(--text2);margin-bottom:0">
+          Deepgram's <strong style="color:var(--red)">live streaming</strong> mode works completely differently:
+          instead of sending a finished file, you open a persistent two-way connection and send
+          audio in small chunks as it is being recorded — in real time. Deepgram sends back partial
+          transcripts within milliseconds as it hears each word, before you've even finished speaking the sentence.
+        </p>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th style="width:22%">Dimension</th>
+            <th><span class="tag-prerecorded">Pre-recorded (current)</span></th>
+            <th><span class="tag-live">Live Streaming</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Protocol</td>
+            <td>HTTP POST — one request, one response</td>
+            <td>WebSocket — persistent two-way connection that stays open</td>
+          </tr>
+          <tr>
+            <td>Audio input</td>
+            <td>Complete file uploaded all at once</td>
+            <td>Raw audio chunks sent continuously, 20–250ms at a time</td>
+          </tr>
+          <tr>
+            <td>When you get results</td>
+            <td>After the entire file is processed (seconds to minutes)</td>
+            <td>Within ~300ms of each word being spoken — mid-sentence</td>
+          </tr>
+          <tr>
+            <td>Result type</td>
+            <td>One final, complete transcript</td>
+            <td>A stream of interim results (partial) followed by final results per utterance</td>
+          </tr>
+          <tr>
+            <td>Use case</td>
+            <td>Podcast transcription, call recording analysis, meeting notes</td>
+            <td>Live captioning, voice commands, real-time translation, voice-driven UI</td>
+          </tr>
+          <tr>
+            <td>Connection lifecycle</td>
+            <td>Opens → sends file → closes</td>
+            <td>Opens → streams audio chunks → receives words → stays open → closes when done</td>
+          </tr>
+          <tr>
+            <td>Latency</td>
+            <td>Equal to audio duration + processing time</td>
+            <td>~300ms from spoken word to transcript (near real-time)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- How live streaming works -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:16px">How Deepgram Live Streaming Works — Step by Step</div>
+      <div class="card">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-title">1. Client opens a WebSocket connection</div>
+            <div class="timeline-desc">
+              Instead of a POST request, the client connects to
+              <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.78rem">wss://api.deepgram.com/v1/listen</code>
+              with model parameters in the URL query string (model, language, diarize, etc.).
+              The connection stays open for the entire duration of the session.
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-title">2. Client streams raw audio bytes</div>
+            <div class="timeline-desc">
+              The microphone (or audio source) is read in small binary chunks — typically 20 to 250 milliseconds of audio at a time.
+              Each chunk is sent over the WebSocket as a binary message the moment it is captured.
+              No buffering, no waiting for the sentence to finish.
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-title">3. Deepgram sends back interim transcripts</div>
+            <div class="timeline-desc">
+              After receiving each chunk, Deepgram responds with a JSON message containing
+              <strong>is_final: false</strong> — a best-guess transcript of what it heard so far.
+              These are fast but may change as more context arrives. You can use these to show
+              "live captions" that update as the person speaks.
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-title">4. Deepgram sends final utterances</div>
+            <div class="timeline-desc">
+              When Deepgram detects a pause (end of sentence or thought), it sends a message with
+              <strong>is_final: true</strong> — the committed, corrected transcript for that utterance.
+              This is what you save to your database or display as confirmed captions.
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-title">5. Client sends a CloseStream message</div>
+            <div class="timeline-desc">
+              When the user stops speaking or the session ends, the client sends a special
+              <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:.78rem">{"type":"CloseStream"}</code>
+              JSON message. Deepgram flushes any remaining audio, sends the last final transcript,
+              and closes the connection cleanly.
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-note" style="margin-top:20px">
+          <span class="doc-note-icon">💡</span>
+          <span>A WebSocket is different from HTTP. HTTP is like sending a letter and waiting for a reply — one exchange and done. A WebSocket is like a phone call — the line stays open and both sides can send messages to each other at any time, in any order, for as long as they want.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- What would change in the design -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:16px">What Would Change in the System Design</div>
+
+      <div class="design-change-card">
+        <div class="change-label remove">❌ Remove — no longer needed</div>
+        <p><strong>The file upload (multipart/form-data):</strong> There is no file to upload. Audio arrives as a stream of small binary packets, not as a complete file. The HTTP POST endpoint and UploadFile handler would be replaced entirely.</p>
+      </div>
+
+      <div class="design-change-card">
+        <div class="change-label add">✅ Add — new infrastructure required</div>
+        <p><strong>WebSocket endpoint in FastAPI:</strong> FastAPI supports WebSockets natively with <code>@app.websocket("/stt/live")</code>. The handler would accept the client's WebSocket connection, open a second WebSocket to Deepgram, and act as a <strong>proxy</strong> — forwarding audio chunks from the client to Deepgram and forwarding transcript messages from Deepgram back to the client, simultaneously.</p>
+      </div>
+
+      <div class="design-change-card">
+        <div class="change-label add">✅ Add — concurrent I/O handling</div>
+        <p><strong>Async bidirectional message routing:</strong> The server needs to listen on two WebSocket connections at the same time — one from the browser and one to Deepgram. This requires two concurrent async tasks running in parallel using <code>asyncio.gather()</code> or <code>asyncio.create_task()</code>. If either connection drops, both must be closed cleanly.</p>
+      </div>
+
+      <div class="design-change-card">
+        <div class="change-label modify">🔄 Modify — different database tracking</div>
+        <p><strong>Database logging strategy:</strong> With pre-recorded, you log one row per request. With live streaming, a session can last minutes. The tracking approach changes: you either log one row per <strong>final utterance</strong> received (many small rows per session), or accumulate the full session transcript in memory and write one row when the session ends. The <strong>latency</strong> field changes meaning too — it becomes the time from a spoken word to receiving the final transcript for that utterance, not end-to-end request time.</p>
+      </div>
+
+      <div class="design-change-card">
+        <div class="change-label modify">🔄 Modify — authentication approach</div>
+        <p><strong>API Key in WebSocket:</strong> HTTP headers cannot be set on WebSocket connections from a browser. The X-API-Key header would instead be passed as a <strong>URL query parameter</strong> when opening the connection (<code>wss://host/stt/live?api_key=...</code>), or in the first message sent after the connection opens. The server validates it immediately and closes the connection if it is missing or wrong.</p>
+      </div>
+
+      <div class="design-change-card">
+        <div class="change-label modify">🔄 Modify — frontend interaction</div>
+        <p><strong>Browser microphone access:</strong> The frontend would use the <code>MediaRecorder API</code> to access the microphone, capture audio in chunks, and send each chunk over a WebSocket. The transcript results would appear word-by-word on screen in real time — the UI would update continuously rather than waiting for a single final result to display.</p>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="doc-section">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">Summary — Pre-recorded vs Live at a Glance</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="doc-box">
+            <div class="doc-box-label" style="color:var(--accent)">Pre-recorded (implemented)</div>
+            <ul>
+              <li><span>Simple HTTP POST — easy to build and test</span></li>
+              <li><span>Works on any audio file regardless of when it was recorded</span></li>
+              <li><span>One response contains the complete, final transcript</span></li>
+              <li><span>Latency = full audio duration + processing time</span></li>
+              <li><span>Best for: archives, recordings, uploads</span></li>
+            </ul>
+          </div>
+          <div class="doc-box">
+            <div class="doc-box-label" style="color:var(--red)">Live Streaming (reflection)</div>
+            <ul>
+              <li><span>WebSocket — more complex, requires bidirectional handling</span></li>
+              <li><span>Only works with live microphone or real-time audio source</span></li>
+              <li><span>Words appear on screen as they are spoken (~300ms delay)</span></li>
+              <li><span>Latency = milliseconds per word regardless of session length</span></li>
+              <li><span>Best for: captions, voice UI, real-time translation</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="doc-note" style="margin-top:16px">
+          <span class="doc-note-icon">🎯</span>
+          <span>Both modes use the same Deepgram Nova-2 model and produce the same quality transcript. The difference is entirely about <strong style="color:var(--text)">when</strong> you need the results — after the fact (pre-recorded) or as it happens (live streaming).</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Documentation Panel ── -->
+  <div class="panel" id="panel-docs">
+    <div class="panel-header">
+      <h1>📖 Documentation</h1>
+      <p>A plain-language guide to every endpoint in this API — no prior experience required.</p>
+    </div>
+
+    <!-- What is this API -->
+    <div class="doc-intro-grid">
+      <div class="doc-intro-card">
+        <div class="doc-intro-icon">🎙️</div>
+        <div class="doc-intro-title">Speech-to-Text</div>
+        <div class="doc-intro-desc">Send an audio file, get back a written transcript with speaker detection and language identification.</div>
+      </div>
+      <div class="doc-intro-card">
+        <div class="doc-intro-icon">🔊</div>
+        <div class="doc-intro-title">Text-to-Speech</div>
+        <div class="doc-intro-desc">Send a sentence or paragraph, get back an MP3 audio file spoken by a human-sounding AI voice.</div>
+      </div>
+      <div class="doc-intro-card">
+        <div class="doc-intro-icon">📄</div>
+        <div class="doc-intro-title">Document Analysis</div>
+        <div class="doc-intro-desc">Send a photo of an ID, passport or invoice, get back all the text fields extracted and structured as JSON.</div>
+      </div>
+      <div class="doc-intro-card">
+        <div class="doc-intro-icon">🗄️</div>
+        <div class="doc-intro-title">Request Tracking</div>
+        <div class="doc-intro-desc">Every API call is automatically saved to PostgreSQL with timestamp, input, output and latency.</div>
+      </div>
+    </div>
+
+    <!-- Authentication -->
+    <div class="doc-section">
+      <div class="card-title">🔐 Authentication — How to Access the API</div>
+      <div class="doc-auth-bar">
+        Every request to this API (except <strong>/health</strong>) requires an <strong>API Key</strong> sent in the HTTP header.<br><br>
+        Think of it like a password for the API. You include it in every request using a header called <strong>X-API-Key</strong>.<br><br>
+        <strong>Header name:</strong> <code style="background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px">X-API-Key</code><br>
+        <strong>Value:</strong> <code style="background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px">blackpool-architect-key-2024</code><br><br>
+        If you forget to include it or use the wrong value, the API returns <strong>401 Unauthorized</strong> and rejects the request.
+        On this site, the key is pre-filled in the 🔑 API Key field at the top — you don't need to type it manually.
+      </div>
+      <a class="doc-swagger-btn" href="/docs" target="_blank">
+        🔗 Open Interactive Swagger Docs (technical reference) ↗
+      </a>
+    </div>
+
+    <!-- STT -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:14px">Endpoint 1 — Speech-to-Text</div>
+      <div class="doc-endpoint-card">
+        <div class="doc-endpoint-header">
+          <span class="doc-method post">POST</span>
+          <span class="doc-path">/stt</span>
+          <span class="doc-endpoint-title">Powered by Deepgram Nova-2</span>
+        </div>
+        <div class="doc-endpoint-body">
+          <p><strong>What it does:</strong> You upload an audio file (MP3 or WAV) and this endpoint sends it to Deepgram's Nova-2 speech recognition model. Nova-2 listens to the audio, converts every spoken word into text, figures out what language is being spoken, measures how long the audio is, and identifies which words were said by which speaker when multiple people are talking.</p>
+
+          <p><strong>When would you use it?</strong> Any time you have recorded audio that you need in text form — meeting recordings, voice memos, call center conversations, podcast transcripts, or voice commands in an app.</p>
+
+          <div class="doc-flow">
+            <div class="doc-flow-step">🎵 Your MP3/WAV file</div>
+            <div class="doc-flow-arrow">→</div>
+            <div class="doc-flow-step">🔐 API Key check</div>
+            <div class="doc-flow-arrow">→</div>
+            <div class="doc-flow-step">☁️ Deepgram Nova-2</div>
+            <div class="doc-flow-arrow">→</div>
+            <div class="doc-flow-step">📝 Transcript JSON</div>
+            <div class="doc-flow-arrow">→</div>
+            <div class="doc-flow-step">🗄️ Saved to DB</div>
+          </div>
+
+          <div class="doc-grid">
+            <div class="doc-box">
+              <div class="doc-box-label">What you send</div>
+              <ul>
+                <li><span><strong>audio</strong> — the file itself (MP3 or WAV, up to 25 MB). Sent as a form attachment, not JSON.</span></li>
+                <li><span><strong>X-API-Key</strong> — your API key in the header.</span></li>
+              </ul>
+            </div>
+            <div class="doc-box">
+              <div class="doc-box-label">What you get back</div>
+              <ul>
+                <li><span><strong>transcript</strong> — the full spoken text as a single string.</span></li>
+                <li><span><strong>language</strong> — auto-detected language code (e.g. <code>es</code> for Spanish, <code>en</code> for English).</span></li>
+                <li><span><strong>duration</strong> — length of the audio in seconds.</span></li>
+                <li><span><strong>speakers</strong> — list of segments, each with speaker ID, start time, end time, and what they said.</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="doc-code">{
+  "transcript": "Hola, ¿cómo estás hoy?",
+  "language": "es",
+  "duration": 3.42,
+  "speakers": [
+    { "speaker": 0, "start": 0.0, "end": 3.42, "text": "Hola, ¿cómo estás hoy?" }
+  ]
+}</div>
+
+          <div class="doc-note">
+            <span class="doc-note-icon">💡</span>
+            <span>Deepgram charges per second of audio processed. The <strong>duration</strong> field in every response tells you exactly how many seconds were billed. This is tracked automatically in the database under <em>external_usage</em>.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TTS -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:14px">Endpoint 2 — Text-to-Speech</div>
+      <div class="doc-endpoint-card">
+        <div class="doc-endpoint-header">
+          <span class="doc-method post">POST</span>
+          <span class="doc-path">/tts</span>
+          <span class="doc-endpoint-title">Powered by Deepgram Aura-2</span>
+        </div>
+        <div class="doc-endpoint-body">
+          <p><strong>What it does:</strong> You send a piece of text and the name of a voice, and this endpoint sends it to Deepgram's Aura-2 text-to-speech model. Aura-2 reads your text aloud using the voice you chose and returns an MP3 audio file you can play or download immediately.</p>
+
+          <p><strong>When would you use it?</strong> Giving your app a voice — reading notifications aloud, creating audio versions of articles, building voice assistants, generating voiceovers for videos, or making accessibility features for visually impaired users.</p>
+
+          <div class="doc-flow">
+            <div class="doc-flow-step">✍️ Your text + voice</div>
+            <div class="doc-flow-arrow">→</div>
+            <div class="doc-flow-step">🔐 API Key check</div>
+            <div class="doc-flow-arrow">→</div>
+            <div class="doc-flow-step">☁️ Deepgram Aura-2</div>
+            <div class="doc-flow-arrow">→</div>
+            <div class="doc-flow-step">🎧 MP3 audio file</div>
+            <div class="doc-flow-arrow">→</div>
+            <div class="doc-flow-step">🗄️ Saved to DB</div>
+          </div>
+
+          <div class="doc-grid">
+            <div class="doc-box">
+              <div class="doc-box-label">What you send (JSON body)</div>
+              <ul>
+                <li><span><strong>text</strong> — the words you want spoken (1–2000 characters).</span></li>
+                <li><span><strong>voice</strong> — (optional) which AI voice to use. Defaults to <code>aura-2-asteria-en</code>. Supports 7 languages with 80+ voices total.</span></li>
+              </ul>
+            </div>
+            <div class="doc-box">
+              <div class="doc-box-label">What you get back</div>
+              <ul>
+                <li><span><strong>audio/mpeg file</strong> — the raw MP3 audio. Your browser plays it directly, or you can download it.</span></li>
+                <li><span>The response is binary audio data, not JSON. The player on this site handles it automatically.</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="doc-code">{
+  "text": "Welcome to Blackpool Assessment. How can I help you today?",
+  "voice": "aura-2-asteria-en"
+}
+// Response: binary MP3 file (audio/mpeg)</div>
+
+          <div class="doc-note">
+            <span class="doc-note-icon">💡</span>
+            <span>Deepgram Aura-2 charges per character synthesized. The longer your text, the more it costs. The number of characters is tracked automatically in <em>external_usage</em> as <code>chars_synthesized</code>. This site auto-detects the language of your text and only shows you voices that speak that language.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IDP -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:14px">Endpoint 3 — Intelligent Document Processing</div>
+      <div class="doc-endpoint-card">
+        <div class="doc-endpoint-header">
+          <span class="doc-method post">POST</span>
+          <span class="doc-path">/idp/analyze</span>
+          <span class="doc-endpoint-title">Powered by OpenAI GPT-4o Vision</span>
+        </div>
+        <div class="doc-endpoint-body">
+          <p><strong>What it does:</strong> You upload a photo or scan of a document (ID card, passport, invoice, receipt, driver's license — anything with text on it). This endpoint sends the image to OpenAI's GPT-4o model, which looks at it like a human would, identifies what type of document it is, reads every visible field, and returns all the information structured as clean JSON. It also draws colored boxes on the image to show exactly where it found each piece of information.</p>
+
+          <p><strong>When would you use it?</strong> Automating data entry from scanned documents, verifying identity documents in onboarding flows, extracting invoice data for accounting systems, digitizing paper records, or any scenario where humans currently read documents and type the information into a system.</p>
+
+          <div class="doc-flow">
+            <div class="doc-flow-step">🖼️ Photo of document</div>
+            <div class="doc-flow-arrow">→</div>
+            <div class="doc-flow-step">🔐 API Key check</div>
+            <div class="doc-flow-arrow">→</div>
+            <div class="doc-flow-step">☁️ GPT-4o Vision</div>
+            <div class="doc-flow-arrow">→</div>
+            <div class="doc-flow-step">📋 Structured JSON</div>
+            <div class="doc-flow-arrow">→</div>
+            <div class="doc-flow-step">🗄️ Saved to DB</div>
+          </div>
+
+          <div class="doc-grid">
+            <div class="doc-box">
+              <div class="doc-box-label">What you send</div>
+              <ul>
+                <li><span><strong>image</strong> — the document photo (JPG or PNG only, max 10 MB). Sent as a form attachment.</span></li>
+                <li><span><strong>X-API-Key</strong> — your API key in the header.</span></li>
+              </ul>
+            </div>
+            <div class="doc-box">
+              <div class="doc-box-label">What you get back</div>
+              <ul>
+                <li><span><strong>document_type</strong> — what kind of document it is (e.g. "National ID Card", "Passport").</span></li>
+                <li><span><strong>extracted_fields</strong> — every visible field as key/value pairs (name, ID number, expiry date, etc.).</span></li>
+                <li><span><strong>annotations</strong> — bounding boxes showing where on the image each field was found (used to draw the colored overlays you see on screen).</span></li>
+                <li><span><strong>confidence</strong> — how certain the model is: <code>high</code>, <code>medium</code>, or <code>low</code>.</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="doc-code">{
+  "document_type": "Passport",
+  "confidence": "high",
+  "extracted_fields": {
+    "surname": "RODRIGUEZ",
+    "given_names": "CLAUDIA MARCELA",
+    "nationality": "COLOMBIANA",
+    "date_of_birth": "20 MAY 1982",
+    "passport_number": "CB007001",
+    "place_of_issue": "G. ANTIOQUIA"
+  }
+}</div>
+
+          <div class="doc-note">
+            <span class="doc-note-icon">💡</span>
+            <span>OpenAI GPT-4o charges per token — tokens are roughly pieces of words in both what you send (the image + instructions) and what you receive (the JSON). A typical document analysis costs around 400–500 prompt tokens + 200–400 completion tokens. The exact token counts are tracked in <em>external_usage</em> on every request.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logs -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:14px">Endpoint 4 — Request Logs</div>
+      <div class="doc-endpoint-card">
+        <div class="doc-endpoint-header">
+          <span class="doc-method get">GET</span>
+          <span class="doc-path">/logs</span>
+          <span class="doc-endpoint-title">PostgreSQL tracking</span>
+        </div>
+        <div class="doc-endpoint-body">
+          <p><strong>What it does:</strong> Returns the full history of every API call made through this system, pulled directly from the PostgreSQL database. Each record includes when the request happened, which endpoint was called, what was sent in, what came out, how long it took, and how much of each external service was used.</p>
+
+          <p><strong>When would you use it?</strong> Auditing API usage, monitoring costs, debugging issues, generating usage reports, or proving to stakeholders that the system is working correctly.</p>
+
+          <div class="doc-grid">
+            <div class="doc-box">
+              <div class="doc-box-label">What you send</div>
+              <ul>
+                <li><span><strong>X-API-Key</strong> — required in the header.</span></li>
+                <li><span><strong>limit</strong> — (optional, URL param) max rows to return. Default: 100.</span></li>
+              </ul>
+            </div>
+            <div class="doc-box">
+              <div class="doc-box-label">Fields returned per record</div>
+              <ul>
+                <li><span><strong>timestamp</strong> — exact date/time of the request (UTC).</span></li>
+                <li><span><strong>endpoint</strong> — which service was called (/stt, /tts, /idp/analyze).</span></li>
+                <li><span><strong>input_data</strong> — what was sent (filename or text snippet).</span></li>
+                <li><span><strong>output_ref</strong> — what came back (transcript, audio size, or extracted fields).</span></li>
+                <li><span><strong>external_usage</strong> — tokens used, audio duration, or characters synthesized.</span></li>
+                <li><span><strong>latency_ms</strong> — total time from request to response in milliseconds.</span></li>
+                <li><span><strong>http_status</strong> — 200 = success, 4xx = client error, 5xx = server error.</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Health -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:14px">Endpoint 5 — Health Check</div>
+      <div class="doc-endpoint-card">
+        <div class="doc-endpoint-header">
+          <span class="doc-method get">GET</span>
+          <span class="doc-path">/health</span>
+          <span class="doc-endpoint-title">No authentication required</span>
+        </div>
+        <div class="doc-endpoint-body">
+          <p><strong>What it does:</strong> A simple "is the server running?" check. Returns a small JSON object confirming the API is online and what version it is. This endpoint is intentionally public — no API key required — because it needs to be reachable by monitoring tools and CI/CD pipelines that check whether the deployment succeeded.</p>
+          <div class="doc-code">GET /health
+// Response:
+{ "status": "ok", "version": "1.0.0" }</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- ── Health Panel ── -->
