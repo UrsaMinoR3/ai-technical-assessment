@@ -631,6 +631,129 @@
     }
     .lang-flag { font-size: 1.2rem; }
 
+    /* ── Architecture Panel ──────────────────────────────── */
+    .arch-download-bar {
+      display: flex; justify-content: flex-end; margin-bottom: 20px;
+    }
+    .btn-download-pdf {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #0d1117; border: none;
+      border-radius: 8px; padding: 10px 20px; font-size: 0.85rem;
+      font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .btn-download-pdf:hover { opacity: 0.85; }
+
+    .arch-diagram {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin: 4px 0 20px;
+    }
+    .arch-layer {
+      padding: 18px 20px; border-bottom: 1px solid var(--border);
+    }
+    .arch-layer:last-child { border-bottom: none; }
+    .arch-layer-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+    }
+    .arch-layer-badge {
+      font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; padding: 3px 10px; border-radius: 20px;
+      white-space: nowrap;
+    }
+    .layer-ingest   .arch-layer-badge { background: rgba(63,185,80,.15);  color: var(--green); }
+    .layer-process  .arch-layer-badge { background: rgba(88,166,255,.15); color: var(--accent); }
+    .layer-storage  .arch-layer-badge { background: rgba(210,153,34,.15); color: var(--yellow); }
+    .layer-analytics .arch-layer-badge { background: rgba(188,140,255,.15); color: #bc8cff; }
+    .layer-crosscut .arch-layer-badge { background: rgba(248,81,73,.12);  color: var(--red); }
+
+    .arch-layer-desc { font-size: 0.78rem; color: var(--text2); }
+
+    .arch-services {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .arch-svc {
+      flex: 1; min-width: 150px; max-width: 220px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px 14px;
+    }
+    .arch-svc-icon { font-size: 1.4rem; margin-bottom: 6px; display: block; }
+    .arch-svc-name {
+      font-size: 0.8rem; font-weight: 700; color: var(--text); margin-bottom: 4px;
+    }
+    .arch-svc-role {
+      font-size: 0.73rem; color: var(--text2); line-height: 1.4;
+    }
+
+    .arch-arrow-row {
+      display: flex; justify-content: center; align-items: center;
+      padding: 8px 0; gap: 8px; font-size: 0.72rem; color: var(--text2);
+    }
+    .arch-arrow-row::before, .arch-arrow-row::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border));
+    }
+    .arch-arrow-row::after {
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    .svc-justify-table { width: 100%; border-collapse: collapse; }
+    .svc-justify-table th {
+      background: var(--surface2); padding: 10px 14px;
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--text2); text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .svc-justify-table td {
+      padding: 10px 14px; font-size: 0.83rem;
+      border-bottom: 1px solid var(--border); vertical-align: top;
+      line-height: 1.5;
+    }
+    .svc-justify-table td:first-child { color: var(--accent); font-weight: 600; white-space: nowrap; }
+    .svc-justify-table td:nth-child(2) { color: var(--text2); }
+    .svc-justify-table td:nth-child(3) { color: var(--green); font-size: 0.78rem; }
+    .svc-justify-table tr:last-child td { border-bottom: none; }
+    .svc-justify-table tr:hover td { background: rgba(88,166,255,0.04); }
+
+    .nfr-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+    }
+    .nfr-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px;
+    }
+    .nfr-card-title {
+      font-size: 0.82rem; font-weight: 700; color: var(--text);
+      margin-bottom: 10px; display: flex; align-items: center; gap: 7px;
+    }
+    .nfr-card ul { list-style: none; display: flex; flex-direction: column; gap: 7px; padding: 0; }
+    .nfr-card li { font-size: 0.78rem; color: var(--text2); display: flex; gap: 7px; line-height: 1.4; }
+    .nfr-card li::before { content: "›"; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Print / PDF export ──────────────────────────────── */
+    @media print {
+      body { background: #fff !important; color: #111 !important; }
+      header, aside, .overlay, .api-key-bar,
+      .arch-download-bar, nav { display: none !important; }
+      main { margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
+      .panel { display: none !important; }
+      #panel-arch { display: block !important; padding: 20px !important; max-width: 100% !important; }
+      .card { background: #f5f7fa !important; border: 1px solid #dde !important; break-inside: avoid; }
+      .arch-diagram { background: #f5f7fa !important; border: 1px solid #dde !important; }
+      .arch-layer { border-bottom: 1px solid #dde !important; }
+      .arch-svc { background: #eef0f5 !important; border: 1px solid #ccd !important; break-inside: avoid; }
+      .nfr-card { background: #eef0f5 !important; border: 1px solid #ccd !important; break-inside: avoid; }
+      .svc-justify-table th { background: #eef0f5 !important; }
+      .card-title, .arch-svc-name, .nfr-card-title { color: #111 !important; }
+      .panel-header h1 { color: #111 !important; }
+      .panel-header p, .arch-svc-role, .nfr-card li, .svc-justify-table td { color: #444 !important; }
+      .arch-layer-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      h2 { color: #111 !important; margin-top: 20px !important; }
+      .doc-section { break-inside: avoid; }
+      .compare-table td, .compare-table th { color: #111 !important; border-color: #dde !important; }
+      @page { margin: 15mm 20mm; size: A4; }
+    }
+
     /* API key bar at top of page */
     .api-key-bar {
       width: 100%; max-width: 720px;
@@ -695,6 +818,10 @@
     </a>
     <a onclick="showPanel('live')" id="nav-live">
       <span class="icon">🔴</span> Live Streaming
+    </a>
+    <div class="nav-label" style="margin-top:16px;">Assessment</div>
+    <a onclick="showPanel('arch')" id="nav-arch">
+      <span class="icon">☁️</span> Architecture Point 2
     </a>
   </nav>
   <div class="sidebar-footer">Powered by Deepgram &amp; OpenAI</div>
@@ -1413,6 +1540,402 @@
 
   </div>
 
+  <!-- ── Architecture Point 2 Panel ── -->
+  <div class="panel" id="panel-arch">
+    <div class="panel-header">
+      <h1>☁️ Architecture Point 2</h1>
+      <p>Diseño conceptual de arquitectura cloud — Caso A: Análisis masivo de llamadas en call center.</p>
+    </div>
+
+    <!-- Download button -->
+    <div class="arch-download-bar">
+      <button class="btn-download-pdf" onclick="downloadArchPDF()">
+        ⬇ Download as PDF
+      </button>
+    </div>
+
+    <!-- ── 1. Use Case Description ── -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:12px">1. Descripción del Caso de Uso y Retos Técnicos</div>
+      <div class="card">
+        <p style="font-size:.87rem;line-height:1.75;color:var(--text2);margin-bottom:14px">
+          Un call center de gran escala puede manejar entre <strong style="color:var(--text)">50,000 y 500,000 llamadas diarias</strong>.
+          Cada llamada genera un archivo de audio que, en el modelo tradicional, requiere revisión humana para extraer insights:
+          ¿el agente fue empático? ¿el cliente quedó satisfecho? ¿de qué tema trató la llamada?
+          El objetivo de esta arquitectura es procesar ese volumen de manera <strong style="color:var(--text)">completamente automática</strong>,
+          en la nube, produciendo transcripciones, análisis de sentimiento, detección de temas y reportes por agente y por campaña,
+          sin intervención humana en el pipeline.
+        </p>
+        <div class="card-title" style="font-size:.78rem;margin-bottom:10px;color:var(--text2)">RETOS TÉCNICOS PRINCIPALES</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="nfr-card" style="padding:12px">
+            <div class="nfr-card-title" style="font-size:.78rem">📦 Volumen e ingesta</div>
+            <ul>
+              <li><span>Cientos de miles de archivos de audio diarios llegando de forma continua</span></li>
+              <li><span>Distintos formatos (WAV, MP3, OGG) y distintas duraciones (2–45 min)</span></li>
+              <li><span>Picos de carga en horarios de mayor actividad del call center</span></li>
+            </ul>
+          </div>
+          <div class="nfr-card" style="padding:12px">
+            <div class="nfr-card-title" style="font-size:.78rem">⚡ Latencia y tiempo real</div>
+            <ul>
+              <li><span>Los supervisores necesitan alertas de llamadas críticas en &lt;5 minutos</span></li>
+              <li><span>Transcripción y análisis deben terminar antes del siguiente turno</span></li>
+              <li><span>Soporte para modo live (streaming) para monitoreo en tiempo real</span></li>
+            </ul>
+          </div>
+          <div class="nfr-card" style="padding:12px">
+            <div class="nfr-card-title" style="font-size:.78rem">🌍 Multilingüismo</div>
+            <ul>
+              <li><span>Call centers atienden en múltiples idiomas según región</span></li>
+              <li><span>El modelo STT debe detectar idioma automáticamente</span></li>
+              <li><span>Los análisis de sentimiento deben ser culturalmente precisos</span></li>
+            </ul>
+          </div>
+          <div class="nfr-card" style="padding:12px">
+            <div class="nfr-card-title" style="font-size:.78rem">🔒 Privacidad y compliance</div>
+            <ul>
+              <li><span>Datos de clientes altamente sensibles (PII, datos financieros)</span></li>
+              <li><span>Regulaciones como GDPR, PCI-DSS según país</span></li>
+              <li><span>Trazabilidad y auditoría completa de cada procesamiento</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 2. Architecture Diagram ── -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:12px">2. Diagrama de Arquitectura</div>
+      <p style="font-size:.82rem;color:var(--text2);margin-bottom:14px">
+        Proveedor cloud elegido: <strong style="color:var(--accent)">Microsoft Azure</strong> — consistente con el Azure OpenAI (GPT-4o) ya integrado en este proyecto.
+        Se combina con <strong style="color:var(--accent)">Deepgram</strong> para STT, aprovechando la integración ya validada.
+      </p>
+      <div class="arch-diagram">
+
+        <!-- Layer 1: Ingestion -->
+        <div class="arch-layer layer-ingest">
+          <div class="arch-layer-header">
+            <div class="arch-layer-badge">Layer 1 — Ingestion</div>
+            <div class="arch-layer-desc">Entrada de grabaciones al sistema</div>
+          </div>
+          <div class="arch-services">
+            <div class="arch-svc">
+              <span class="arch-svc-icon">☎️</span>
+              <div class="arch-svc-name">PBX / Contact Center</div>
+              <div class="arch-svc-role">Sistema de telefonía. Genera los archivos WAV/MP3 al finalizar cada llamada.</div>
+            </div>
+            <div class="arch-svc">
+              <span class="arch-svc-icon">📥</span>
+              <div class="arch-svc-name">Azure Blob Storage (RAW)</div>
+              <div class="arch-svc-role">Almacenamiento de objetos de alta durabilidad. Landing zone para todas las grabaciones crudas organizadas por fecha/agente/campaña.</div>
+            </div>
+            <div class="arch-svc">
+              <span class="arch-svc-icon">⚡</span>
+              <div class="arch-svc-name">Azure Event Grid</div>
+              <div class="arch-svc-role">Detecta cada nuevo archivo subido a Blob Storage y dispara un evento de procesamiento de inmediato — sin polling.</div>
+            </div>
+            <div class="arch-svc">
+              <span class="arch-svc-icon">📨</span>
+              <div class="arch-svc-name">Azure Service Bus</div>
+              <div class="arch-svc-role">Cola de mensajes que desacopla la ingesta del procesamiento. Garantiza entrega y permite reintentos automáticos ante fallos.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="arch-arrow-row">▼ cola de trabajos de transcripción y análisis</div>
+
+        <!-- Layer 2: Processing -->
+        <div class="arch-layer layer-process">
+          <div class="arch-layer-header">
+            <div class="arch-layer-badge">Layer 2 — Processing (AI)</div>
+            <div class="arch-layer-desc">Transcripción, análisis y enriquecimiento</div>
+          </div>
+          <div class="arch-services">
+            <div class="arch-svc">
+              <span class="arch-svc-icon">🐳</span>
+              <div class="arch-svc-name">Azure Container Apps</div>
+              <div class="arch-svc-role">Orquestador principal. Escala de 0 a N réplicas según mensajes en la cola. Coordina el pipeline STT → NLU → storage.</div>
+            </div>
+            <div class="arch-svc">
+              <span class="arch-svc-icon">🎙️</span>
+              <div class="arch-svc-name">Deepgram Nova-2 (STT)</div>
+              <div class="arch-svc-role">Transcripción automática con detección de idioma, diarización de hablantes (agente vs. cliente) y marcas de tiempo por palabra.</div>
+            </div>
+            <div class="arch-svc">
+              <span class="arch-svc-icon">🧠</span>
+              <div class="arch-svc-name">Azure OpenAI GPT-4o</div>
+              <div class="arch-svc-role">Análisis de sentimiento, detección de temas, extracción de entidades, resumen de llamada y scoring de calidad por agente.</div>
+            </div>
+            <div class="arch-svc">
+              <span class="arch-svc-icon">🔄</span>
+              <div class="arch-svc-name">Azure Data Factory</div>
+              <div class="arch-svc-role">Orquestación de pipelines ETL para lotes nocturnos de gran volumen, transformación y carga hacia las capas de analytics.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="arch-arrow-row">▼ resultados estructurados y transcripciones completas</div>
+
+        <!-- Layer 3: Storage -->
+        <div class="arch-layer layer-storage">
+          <div class="arch-layer-header">
+            <div class="arch-layer-badge">Layer 3 — Storage</div>
+            <div class="arch-layer-desc">Persistencia de resultados (Medallion: Bronze → Silver → Gold)</div>
+          </div>
+          <div class="arch-services">
+            <div class="arch-svc">
+              <span class="arch-svc-icon">🗄️</span>
+              <div class="arch-svc-name">Azure PostgreSQL Flexible</div>
+              <div class="arch-svc-role">Metadatos de llamadas: agente, campaña, duración, sentimiento, temas, score de calidad, timestamp. Tabla principal de consultas.</div>
+            </div>
+            <div class="arch-svc">
+              <span class="arch-svc-icon">🌌</span>
+              <div class="arch-svc-name">Azure Cosmos DB</div>
+              <div class="arch-svc-role">Transcripciones completas y resúmenes en formato JSON. Permite búsqueda por fragmento de texto y acceso de baja latencia.</div>
+            </div>
+            <div class="arch-svc">
+              <span class="arch-svc-icon">🏔️</span>
+              <div class="arch-svc-name">ADLS Gen2 (Data Lake)</div>
+              <div class="arch-svc-role">Archivado de datos Bronze/Silver/Gold. Histórico completo para re-entrenamiento de modelos y auditorías de compliance.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="arch-arrow-row">▼ métricas agregadas y datos listos para análisis</div>
+
+        <!-- Layer 4: Analytics -->
+        <div class="arch-layer layer-analytics">
+          <div class="arch-layer-header">
+            <div class="arch-layer-badge">Layer 4 — Analytics &amp; Reporting</div>
+            <div class="arch-layer-desc">Dashboards por agente y campaña</div>
+          </div>
+          <div class="arch-services">
+            <div class="arch-svc">
+              <span class="arch-svc-icon">🔬</span>
+              <div class="arch-svc-name">Azure Synapse Analytics</div>
+              <div class="arch-svc-role">Consultas SQL serverless sobre el Data Lake. Agrega métricas históricas, rankings de agentes y tendencias de sentimiento por campaña.</div>
+            </div>
+            <div class="arch-svc">
+              <span class="arch-svc-icon">📊</span>
+              <div class="arch-svc-name">Power BI</div>
+              <div class="arch-svc-role">Dashboards interactivos para supervisores y gerencia. Reportes por agente (score, topics, sentiment) y por campaña (conversion, satisfaction).</div>
+            </div>
+            <div class="arch-svc">
+              <span class="arch-svc-icon">🔔</span>
+              <div class="arch-svc-name">Azure Monitor + Alerts</div>
+              <div class="arch-svc-role">Alertas en tiempo real cuando se detecta sentimiento muy negativo o palabras clave críticas en una llamada activa.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cross-cutting: Security -->
+        <div class="arch-layer layer-crosscut">
+          <div class="arch-layer-header">
+            <div class="arch-layer-badge">Cross-cutting — Security &amp; Observability</div>
+            <div class="arch-layer-desc">Aplicado en todas las capas</div>
+          </div>
+          <div class="arch-services">
+            <div class="arch-svc">
+              <span class="arch-svc-icon">🔑</span>
+              <div class="arch-svc-name">Azure Key Vault</div>
+              <div class="arch-svc-role">Almacena todas las API keys (Deepgram, OpenAI), connection strings y certificados. Rotación automática, sin secretos en código.</div>
+            </div>
+            <div class="arch-svc">
+              <span class="arch-svc-icon">🛡️</span>
+              <div class="arch-svc-name">Azure AD + RBAC</div>
+              <div class="arch-svc-role">Identidades gestionadas para cada servicio. Sin contraseñas estáticas. Acceso de mínimo privilegio: cada servicio solo lee lo que necesita.</div>
+            </div>
+            <div class="arch-svc">
+              <span class="arch-svc-icon">🌐</span>
+              <div class="arch-svc-name">Private Endpoints + VNet</div>
+              <div class="arch-svc-role">Todo el tráfico entre servicios Azure viaja por la red privada. El Blob Storage y PostgreSQL no son accesibles desde internet público.</div>
+            </div>
+            <div class="arch-svc">
+              <span class="arch-svc-icon">📡</span>
+              <div class="arch-svc-name">Application Insights</div>
+              <div class="arch-svc-role">Trazabilidad end-to-end de cada llamada procesada: latencia por etapa, tasa de error, throughput del pipeline.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── 3. Data Flow ── -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:12px">3. Flujo de Datos — Entrada, Procesamiento y Salida</div>
+      <div class="card">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--green)"></div>
+            <div class="timeline-title">① Entrada — Grabación llega al sistema</div>
+            <div class="timeline-desc">
+              El PBX o sistema de grabación del call center sube el archivo WAV/MP3 a <strong>Azure Blob Storage (RAW)</strong>
+              vía API REST o SFTP. Cada archivo va etiquetado con metadatos: ID de agente, ID de campaña, timestamp de inicio,
+              número de cliente (anonimizado para compliance). En el momento del upload, <strong>Azure Event Grid</strong>
+              dispara un evento que crea un mensaje en <strong>Azure Service Bus</strong> sin ninguna acción manual.
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-title">② Procesamiento STT — Transcripción con Deepgram</div>
+            <div class="timeline-desc">
+              <strong>Azure Container Apps</strong> consume el mensaje de la cola, descarga el audio de Blob Storage
+              y lo envía a <strong>Deepgram Nova-2</strong>. El modelo devuelve la transcripción completa con
+              diarización (quién habló en qué momento), idioma detectado y marcas de tiempo por palabra.
+              Para llamadas largas (&gt;30 min), el audio se divide en segmentos de 5 minutos para paralelizar
+              el procesamiento y reducir la latencia total.
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-title">③ Análisis NLU — Azure OpenAI GPT-4o</div>
+            <div class="timeline-desc">
+              La transcripción es enviada a <strong>Azure OpenAI (GPT-4o)</strong> con un prompt estructurado que extrae:
+              sentimiento general (positivo / neutro / negativo / escalar 0–100),
+              temas detectados (billing, soporte técnico, cancelación, queja, etc.),
+              entidades clave (productos mencionados, números de cuenta — con enmascaramiento PII),
+              resumen ejecutivo de la llamada (&lt;3 oraciones),
+              y score de calidad del agente (adherencia a protocolo, empatía, resolución).
+              Los resultados se estructuran como JSON para escritura directa en base de datos.
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--yellow)"></div>
+            <div class="timeline-title">④ Persistencia — Múltiples destinos en paralelo</div>
+            <div class="timeline-desc">
+              El orquestador escribe de forma paralela en tres destinos:
+              <strong>Azure PostgreSQL</strong> recibe la fila de metadatos y scores (escritura rápida, consultable con SQL estándar).
+              <strong>Cosmos DB</strong> recibe el documento JSON completo con la transcripción y el resumen.
+              <strong>ADLS Gen2</strong> archiva todos los datos crudos y procesados para compliance y re-entrenamiento futuro.
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:#bc8cff"></div>
+            <div class="timeline-title">⑤ Salida — Reportes y alertas</div>
+            <div class="timeline-desc">
+              <strong>Azure Synapse Analytics</strong> corre queries programadas (cada hora o bajo demanda) que agregan los datos
+              de PostgreSQL y el Data Lake para producir métricas consolidadas.
+              <strong>Power BI</strong> se conecta a Synapse y presenta dashboards en tiempo cuasi-real: ranking de agentes
+              por score de calidad, distribución de sentimiento por campaña, temas más frecuentes, evolución temporal.
+              Si el análisis detecta sentimiento muy negativo durante el procesamiento, <strong>Azure Monitor</strong>
+              dispara una alerta al supervisor en menos de 5 minutos tras la finalización de la llamada.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 4. Service Justification ── -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:12px">4. Justificación de los Servicios Cloud Elegidos</div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <table class="svc-justify-table">
+          <thead>
+            <tr>
+              <th>Servicio</th>
+              <th>Por qué este servicio</th>
+              <th>Por qué no otra alternativa</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Deepgram Nova-2</td>
+              <td>Mejor WER (Word Error Rate) en inglés y español para audio de call center con ruido. Diarización nativa, detección automática de idioma y marcas de tiempo por palabra en una sola llamada API.</td>
+              <td>Azure Speech-to-Text tiene menor precisión en acentos regionales. OpenAI Whisper no ofrece diarización nativa ni streaming en tiempo real.</td>
+            </tr>
+            <tr>
+              <td>Azure OpenAI GPT-4o</td>
+              <td>Modelo líder en comprensión de texto complejo. Permite análisis multi-tarea en un solo prompt (sentimiento + temas + entidades + resumen), reduciendo el número de llamadas API.</td>
+              <td>Modelos más pequeños (GPT-3.5) son menos precisos en análisis de matices de sentimiento. Modelos open-source requieren infraestructura propia y ajuste fino costoso.</td>
+            </tr>
+            <tr>
+              <td>Azure Blob Storage</td>
+              <td>Almacenamiento de objetos de bajo costo con 11 nueves de durabilidad. Integración nativa con Event Grid para triggers automáticos sin polling.</td>
+              <td>ADLS Gen2 es superior para analytics pero más costoso como landing zone. Blob Storage es óptimo para la ingesta inicial de archivos binarios.</td>
+            </tr>
+            <tr>
+              <td>Azure Service Bus</td>
+              <td>Garantiza entrega al menos una vez, reintentos automáticos, dead-letter queue para mensajes fallidos y desacoplamiento total entre ingesta y procesamiento.</td>
+              <td>Azure Event Hubs está orientado a streaming de alta frecuencia y no garantiza orden ni exactly-once delivery. Para jobs discretos de procesamiento de archivos, Service Bus es más apropiado.</td>
+            </tr>
+            <tr>
+              <td>Azure Container Apps</td>
+              <td>Escala automáticamente a 0 cuando no hay mensajes en la cola (KEDA) y a cientos de réplicas en momentos pico — sin gestionar infraestructura de Kubernetes manualmente.</td>
+              <td>Azure Functions tiene límite de ejecución de 10 min (máx 60), insuficiente para llamadas largas. AKS requiere gestión activa del cluster. Container Apps es el punto medio ideal.</td>
+            </tr>
+            <tr>
+              <td>Azure PostgreSQL Flexible</td>
+              <td>Base de datos relacional gestionada con alta disponibilidad, backups automáticos y soporte nativo para JSON. Compatible con el ORM (SQLAlchemy) ya usado en este proyecto.</td>
+              <td>Cosmos DB no es óptimo para queries SQL relacionales con JOINs y GROUP BY que producen los reportes de agentes. PostgreSQL es mejor para datos estructurados y métricas.</td>
+            </tr>
+            <tr>
+              <td>Azure Cosmos DB</td>
+              <td>Latencia de lectura &lt;10ms para servir transcripciones completas bajo demanda. Modelo de datos flexible (JSON) ideal para documentos de longitud variable sin esquema fijo.</td>
+              <td>PostgreSQL no es eficiente almacenando textos de transcripción de 5,000+ palabras como campos JSONB si se consultan frecuentemente por fragmento de texto.</td>
+            </tr>
+            <tr>
+              <td>Azure Synapse Analytics</td>
+              <td>Permite consultar el Data Lake (ADLS) con SQL serverless sin mover datos. Escala elásticamente para queries históricas pesadas sin costo fijo de infraestructura.</td>
+              <td>Azure SQL Warehouse (dedicado) tiene costo fijo aunque no se use. Synapse serverless paga por TB leído — ideal para analytics episódicos sobre histórico grande.</td>
+            </tr>
+            <tr>
+              <td>Power BI</td>
+              <td>Integración nativa con Azure Synapse y PostgreSQL. Dashboards interactivos sin necesidad de código. Familiar para supervisores y equipos de gestión no técnicos.</td>
+              <td>Grafana está más orientado a observabilidad de infraestructura. Tableau requiere licencias más costosas. Power BI Premium está incluido en muchas licencias M365 empresariales.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── 5. Scalability, Availability, Security ── -->
+    <div class="doc-section">
+      <div class="card-title" style="margin-bottom:12px">5. Escalabilidad, Disponibilidad y Seguridad</div>
+      <div class="nfr-grid">
+        <div class="nfr-card">
+          <div class="nfr-card-title">📈 Escalabilidad</div>
+          <ul>
+            <li><span><strong>Azure Container Apps + KEDA:</strong> escala de 0 a N réplicas basándose en el número de mensajes en Service Bus. 0 costo cuando no hay llamadas.</span></li>
+            <li><span><strong>Service Bus Premium</strong> con particionamiento: distribuye la carga entre múltiples brokers para alta frecuencia de mensajes.</span></li>
+            <li><span><strong>Deepgram concurrencia:</strong> soporta miles de transcripciones simultáneas — se paga por minuto de audio, no por instancia.</span></li>
+            <li><span><strong>Azure OpenAI rate limits:</strong> gestionados con retry + backoff exponencial. Batch API para análisis no urgentes a menor costo.</span></li>
+            <li><span><strong>Synapse serverless:</strong> escala automáticamente para queries de reportes, sin provisionar capacidad fija.</span></li>
+            <li><span><strong>Medallion architecture:</strong> Bronze (raw) → Silver (cleaned) → Gold (aggregated). Permite re-procesar solo lo que cambió sin rehacer todo el pipeline.</span></li>
+          </ul>
+        </div>
+        <div class="nfr-card">
+          <div class="nfr-card-title">🔄 Disponibilidad</div>
+          <ul>
+            <li><span><strong>Azure SLA 99.9%+</strong> en todos los servicios gestionados (Blob, PostgreSQL, Cosmos DB, Service Bus).</span></li>
+            <li><span><strong>Geo-replication:</strong> Blob Storage y Cosmos DB replicados en zona secundaria con failover automático.</span></li>
+            <li><span><strong>PostgreSQL Flexible con High Availability:</strong> réplica standby en otra zona con failover automático en &lt;60 segundos.</span></li>
+            <li><span><strong>Service Bus Dead-Letter Queue:</strong> mensajes que fallan 3 veces van a DLQ para revisión, sin pérdida de datos.</span></li>
+            <li><span><strong>Container Apps health checks:</strong> reinicio automático de instancias no saludables.</span></li>
+            <li><span><strong>Circuit breaker pattern:</strong> si Deepgram o OpenAI están degradados, los jobs se encolan y reintentan sin perder llamadas.</span></li>
+          </ul>
+        </div>
+        <div class="nfr-card">
+          <div class="nfr-card-title">🔒 Seguridad</div>
+          <ul>
+            <li><span><strong>Azure Key Vault:</strong> todas las API keys y connection strings. Acceso mediante Managed Identity — sin secretos en variables de entorno ni código.</span></li>
+            <li><span><strong>Azure AD + RBAC:</strong> cada servicio tiene una identidad gestionada con permisos mínimos. Un Container App solo puede leer el Blob Storage de entrada.</span></li>
+            <li><span><strong>Private Endpoints:</strong> Blob Storage, PostgreSQL y Cosmos DB sin acceso público. Solo accesibles desde dentro de la VNet.</span></li>
+            <li><span><strong>Encryption at rest + in transit:</strong> AES-256 en todos los servicios Azure. TLS 1.2+ obligatorio para toda comunicación.</span></li>
+            <li><span><strong>PII Masking:</strong> antes de enviar transcripciones a GPT-4o, se aplica un paso de anonimización (números de cuenta, nombres) usando Azure AI Language.</span></li>
+            <li><span><strong>Audit logs:</strong> Azure Monitor + Application Insights registra cada procesamiento con trazabilidad completa para compliance GDPR/PCI-DSS.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-note" style="margin-top:8px">
+      <span class="doc-note-icon">📋</span>
+      <span>Este es un diseño conceptual — no se implementa código adicional. El objetivo es demostrar la capacidad de diseñar sistemas escalables y justificar decisiones técnicas en un contexto real de call center a escala empresarial.</span>
+    </div>
+  </div>
+
   <!-- ── Health Panel ── -->
   <div class="panel" id="panel-health">
     <div class="panel-header">
@@ -1472,6 +1995,16 @@
     document.getElementById('panel-' + name).classList.add('active');
     document.getElementById('nav-' + name).classList.add('active');
     closeSidebar();
+  }
+
+  // ── Architecture PDF export ──────────────────────────────
+  // @media print CSS (defined in <style>) hides everything except #panel-arch.
+  // The browser's "Save as PDF" option in the print dialog produces the PDF.
+  function downloadArchPDF() {
+    const prev = document.title;
+    document.title = 'Architecture Point 2 — Blackpool Assessment';
+    window.print();
+    document.title = prev;
   }
 
   // ── API key helper ───────────────────────────────────────
