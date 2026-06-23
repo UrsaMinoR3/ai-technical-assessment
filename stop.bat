@@ -6,7 +6,7 @@ echo.
 echo [36m  Blackpool Assessment — Stopping services...[0m
 echo.
 
-docker compose down
+docker compose -f infra\docker-compose.yml --env-file infra\.env down
 if %errorlevel% equ 0 (
     echo.
     echo [32m  ✓  All containers stopped.[0m
@@ -14,7 +14,7 @@ if %errorlevel% equ 0 (
 ) else (
     echo.
     echo [33m  Could not stop containers. Are they already stopped?[0m
-    echo [90m     Check status: docker compose ps[0m
+    echo [90m     Check status: docker compose -f infra\docker-compose.yml ps[0m
 )
 echo.
 pause
