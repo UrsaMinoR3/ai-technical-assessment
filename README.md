@@ -8,6 +8,20 @@ The project ships with a full **interactive web UI** — no Swagger needed. Open
 
 ## Prerequisites
 
+### Windows — required one-time setup before installing Docker
+
+Docker Desktop on Windows requires WSL 2 (Windows Subsystem for Linux). Run this **first**, in PowerShell as Administrator:
+
+```powershell
+wsl --install
+```
+
+Restart your computer when prompted, then install Docker Desktop.
+
+---
+
+### All platforms
+
 | Requirement | Version | Notes |
 |------------|---------|-------|
 | [Docker Desktop](https://www.docker.com/products/docker-desktop/) | 4.0+ | **Required** — handles Python, PostgreSQL, everything |
@@ -22,29 +36,29 @@ The project ships with a full **interactive web UI** — no Swagger needed. Open
 ### Option A — Double-click launcher (Windows)
 
 1. Clone the repo
-2. Copy `.env.example` → `.env` and fill in your API keys  
+2. Fill in your API keys in **`infra/.env`**
 3. Double-click **`start.bat`**
 
-The script checks Docker, sets up the environment, builds the containers, waits for the API to be healthy, and opens your browser automatically.
+The script checks Docker, verifies credentials, builds the containers, waits for the API to be healthy, and opens your browser automatically.
 
 ---
 
 ### Option B — Manual (any OS)
 
 ```bash
-# 1. Clone
+# 1. Clone and enter the repo
 git clone https://github.com/UrsaMinoR3/ai-technical-assessment.git
 cd ai-technical-assessment
 
 # 2. Set up credentials
-cp .env.example .env
-# Open .env and fill in your real API keys (see table below)
+cp infra/.env.example infra/.env
+# Open infra/.env and fill in your real API keys
 
 # 3. Launch
-docker compose up --build
+docker compose -f infra/docker-compose.yml --env-file infra/.env up --build
 ```
 
-**Mac / Linux users:** use the shell script instead:
+**Mac / Linux — use the shell launcher instead:**
 ```bash
 chmod +x start.sh
 ./start.sh
@@ -60,26 +74,27 @@ chmod +x start.sh
 | `http://localhost:8000/docs` | Swagger / OpenAPI reference |
 | `http://localhost:8000/health` | Health check (no auth required) |
 
-**API Key** (pre-set in `.env.example`): `blackpool-architect-key-2024`
+**API Key:** set in `infra/.env` under `API_KEY`
 
 ---
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` and fill in the values:
+All credentials live in **`infra/.env`** (gitignored — never committed).  
+Copy `infra/.env.example` → `infra/.env` and fill in the values:
 
 | Variable | Description |
 |----------|-------------|
 | `DB_USER` | PostgreSQL username (default: `postgres`) |
 | `DB_PASSWORD` | PostgreSQL password |
 | `DB_NAME` | Database name (default: `ai_assessment`) |
-| `API_KEY` | Your internal API key sent in `X-API-Key` header |
+| `API_KEY` | Internal API key — sent as `X-API-Key` header on every request |
 | `AZURE_OPENAI_KEY` | Azure OpenAI (or OpenAI) API key |
-| `AZURE_OPENAI_BASE_URL` | API base URL (e.g. `https://api.openai.com/v1/`) |
+| `AZURE_OPENAI_BASE_URL` | API base URL (e.g. `https://your-resource.openai.azure.com/openai/v1/`) |
 | `AZURE_OPENAI_MODEL` | Model name (e.g. `gpt-4o`) |
 | `DEEPGRAM_API_KEY` | Deepgram API key |
 
-> **Security:** `.env` is in `.gitignore` — real credentials are never committed. CI/CD uses GitHub Secrets.
+> **Security:** `infra/.env` is listed in `.gitignore` — real credentials are never committed. CI/CD uses GitHub Secrets.
 
 ---
 
@@ -92,7 +107,7 @@ Transcribes an MP3 or WAV file using **Deepgram Nova-2** with speaker diarizatio
 
 ```bash
 curl -X POST http://localhost:8000/stt \
-  -H "X-API-Key: blackpool-architect-key-2024" \
+  -H "X-API-Key: your-api-key" \
   -F "audio=@recording.mp3"
 ```
 
@@ -115,7 +130,7 @@ Synthesizes text to a downloadable MP3 using **Deepgram Aura-2** (80+ voices, 7 
 
 ```bash
 curl -X POST http://localhost:8000/tts \
-  -H "X-API-Key: blackpool-architect-key-2024" \
+  -H "X-API-Key: your-api-key" \
   -H "Content-Type: application/json" \
   -d '{"text": "Welcome to Blackpool.", "voice": "aura-2-asteria-en"}' \
   --output speech.mp3
@@ -126,11 +141,11 @@ Available language codes: `en`, `es`, `de`, `nl`, `it`, `fr`, `ja`
 ---
 
 ### `POST /idp/analyze` — Intelligent Document Processing
-Extracts structured fields from a document image using **Azure OpenAI GPT-4o Vision** with bounding box annotations.
+Extracts structured fields from a document image using **Azure OpenAI Vision** with bounding box annotations.
 
 ```bash
 curl -X POST http://localhost:8000/idp/analyze \
-  -H "X-API-Key: blackpool-architect-key-2024" \
+  -H "X-API-Key: your-api-key" \
   -F "image=@passport.jpg"
 ```
 
@@ -157,7 +172,7 @@ Returns all tracked requests from PostgreSQL (timestamp, endpoint, input, output
 
 ```bash
 curl http://localhost:8000/logs \
-  -H "X-API-Key: blackpool-architect-key-2024"
+  -H "X-API-Key: your-api-key"
 ```
 
 ---
@@ -174,16 +189,19 @@ curl http://localhost:8000/health
 
 ```bash
 # Stop all services
-docker compose down
+docker compose -f infra/docker-compose.yml --env-file infra/.env down
 
 # Stop and delete the database volume (full reset)
-docker compose down -v
+docker compose -f infra/docker-compose.yml --env-file infra/.env down -v
 
-# View live logs
-docker compose logs -f
+# View live logs from all containers
+docker compose -f infra/docker-compose.yml --env-file infra/.env logs -f
 
 # View API logs only
-docker compose logs -f api
+docker compose -f infra/docker-compose.yml --env-file infra/.env logs -f api
+
+# Rebuild after code changes
+docker compose -f infra/docker-compose.yml --env-file infra/.env up --build
 ```
 
 ---
@@ -199,18 +217,22 @@ ai-technical-assessment/
 │   │   ├── routers/        # Endpoint handlers (stt, tts, idp, logs)
 │   │   ├── schemas/        # Pydantic request/response schemas
 │   │   ├── services/       # External service integrations
+│   │   ├── static/
+│   │   │   └── index.html  # Full interactive SPA (no framework)
 │   │   └── main.py         # FastAPI app entry point + static UI mount
-│   ├── static/
-│   │   └── index.html      # Full interactive SPA (no framework)
 │   ├── Dockerfile
 │   └── requirements.txt
 ├── infra/
-│   ├── docker-compose.yml  # Original infra compose
+│   ├── docker-compose.yml  # ← THE compose file
 │   ├── init.sql            # PostgreSQL schema
-│   └── .env.example
-├── docker-compose.yml      # Root compose (use this one)
-├── .env.example            # Credential template
-├── start.bat               # Windows launcher (double-click)
+│   └── .env.example        # Credential template — copy to infra/.env
+├── docs/
+├── tests/
+├── .github/workflows/      # CI/CD pipeline
+├── .gitignore
+├── README.md
+├── start.bat               # Windows double-click launcher
+├── stop.bat                # Windows stop script
 └── start.sh                # Mac/Linux launcher
 ```
 
