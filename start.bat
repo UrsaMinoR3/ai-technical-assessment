@@ -7,11 +7,11 @@ cd /d "%~dp0"
 ::  Double-click this file on Windows to start everything automatically.
 ::
 ::  What this script does:
-::    1. Checks Docker Desktop is installed and running
-::    2. Checks your .env credentials file exists (creates it if not)
-::    3. Builds and starts the API + PostgreSQL containers
-::    4. Waits for the API to be healthy
-::    5. Opens your browser to http://localhost:8000
+::    1. Checks if the API is already running (opens browser if so)
+::    2. Checks Docker Desktop is installed and running
+::    3. Checks your .env credentials file exists (creates it if not)
+::    4. Builds and starts the API + PostgreSQL containers
+::    5. Waits for the API to be healthy, then opens your browser
 :: ─────────────────────────────────────────────────────────────────────────────
 
 :: Enable ANSI colors (Windows 10/11)
@@ -34,6 +34,32 @@ echo %C_CYAN%  ║   FastAPI  ·  Deepgram  ·  Azure OpenAI          ║%C_RESE
 echo %C_CYAN%  ║                                                  ║%C_RESET%
 echo %C_CYAN%  ╚══════════════════════════════════════════════════╝%C_RESET%
 echo.
+
+:: ─── FAST PATH: Check if already running ──────────────────────────────────────
+curl -s -f http://localhost:8000/health >nul 2>&1
+if %errorlevel% equ 0 (
+    echo %C_GREEN%  ✓  API is already running!%C_RESET%
+    echo.
+    echo %C_CYAN%  ══════════════════════════════════════════════════%C_RESET%
+    echo.
+    echo %C_GREEN%  The application is LIVE at:%C_RESET%
+    echo.
+    echo %C_WHITE%    Web UI (main)  →  http://localhost:8000%C_RESET%
+    echo %C_WHITE%    Swagger docs   →  http://localhost:8000/docs%C_RESET%
+    echo %C_WHITE%    API Key        →  blackpool-architect-key-2024%C_RESET%
+    echo.
+    echo %C_DIM%    To stop the services: docker compose down%C_RESET%
+    echo %C_DIM%    (or double-click stop.bat)%C_RESET%
+    echo.
+    echo %C_CYAN%  ══════════════════════════════════════════════════%C_RESET%
+    echo.
+    echo %C_WHITE%  Opening browser...%C_RESET%
+    start http://localhost:8000
+    echo.
+    echo %C_DIM%  This window will close automatically in 5 seconds.%C_RESET%
+    timeout /t 5 /nobreak >nul
+    goto :EOF
+)
 
 :: ─── STEP 1: Check Docker is installed ────────────────────────────────────────
 echo %C_WHITE%  [1/4] Checking Docker Desktop...%C_RESET%
@@ -163,23 +189,21 @@ echo.
 :: ─── Done ─────────────────────────────────────────────────────────────────────
 echo %C_CYAN%  ══════════════════════════════════════════════════%C_RESET%
 echo.
-echo %C_GREEN%  Everything is running.  Here is where to go:%C_RESET%
+echo %C_GREEN%  The application is LIVE at:%C_RESET%
 echo.
 echo %C_WHITE%    Web UI (main)  →  http://localhost:8000%C_RESET%
 echo %C_WHITE%    Swagger docs   →  http://localhost:8000/docs%C_RESET%
 echo %C_WHITE%    API Key        →  blackpool-architect-key-2024%C_RESET%
 echo.
-echo %C_DIM%    Services running in background — to stop them:%C_RESET%
-echo %C_DIM%    docker compose down%C_RESET%
-echo %C_DIM%    (or double-click stop.bat)%C_RESET%
+echo %C_DIM%    Services are running in the background.%C_RESET%
+echo %C_DIM%    To stop them: docker compose down  (or double-click stop.bat)%C_RESET%
 echo.
 echo %C_CYAN%  ══════════════════════════════════════════════════%C_RESET%
 echo.
-echo %C_WHITE%  Opening browser in 3 seconds...%C_RESET%
-timeout /t 3 /nobreak >nul
+echo %C_WHITE%  Opening browser...%C_RESET%
 start http://localhost:8000
-
 echo.
-echo %C_DIM%  Press any key to close this window (services keep running in background)%C_RESET%
-pause >nul
+echo %C_DIM%  This window will close automatically in 5 seconds.%C_RESET%
+echo %C_DIM%  (Services keep running in the background)%C_RESET%
+timeout /t 5 /nobreak >nul
 endlocal
