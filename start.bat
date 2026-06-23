@@ -100,35 +100,35 @@ echo.
 echo %C_WHITE%  [2/4] Checking credentials (.env file)...%C_RESET%
 
 if not exist ".env" (
-    echo %C_YELLOW%  !  .env file not found.%C_RESET%
+    echo %C_YELLOW%  !  .env file not found at repo root.%C_RESET%
     echo.
-    if not exist ".env.example" (
-        echo %C_RED%  ✗  .env.example also missing — cannot create .env%C_RESET%
+
+    if exist "infra\.env" (
+        copy "infra\.env" ".env" >nul
+        echo %C_GREEN%  ✓  Created .env from infra\.env (credentials copied automatically)%C_RESET%
+    ) else if exist ".env.example" (
+        copy ".env.example" ".env" >nul
+        echo %C_YELLOW%  →  Created .env from template — fill in your API keys before launching.%C_RESET%
+        echo.
+        echo %C_WHITE%  Required keys in .env:%C_RESET%
+        echo %C_DIM%    AZURE_OPENAI_KEY      — your Azure OpenAI (or OpenAI) API key%C_RESET%
+        echo %C_DIM%    AZURE_OPENAI_BASE_URL — base URL, e.g. https://api.openai.com/v1/%C_RESET%
+        echo %C_DIM%    AZURE_OPENAI_MODEL    — model name, e.g. gpt-4o%C_RESET%
+        echo %C_DIM%    DEEPGRAM_API_KEY      — your Deepgram API key%C_RESET%
+        echo %C_DIM%    API_KEY               — any string you want as the local API password%C_RESET%
+        echo.
+        set /p "OPEN_ENV=  Type 'open' to edit .env in Notepad now, or press ENTER to skip: "
+        if /i "!OPEN_ENV!"=="open" (
+            start notepad ".env"
+            echo.
+            echo %C_YELLOW%  Edit and SAVE .env in Notepad, then come back here.%C_RESET%
+            pause
+        )
+    ) else (
+        echo %C_RED%  ✗  No .env or infra\.env found — cannot start.%C_RESET%
         echo %C_WHITE%    Re-clone the repository from GitHub and try again.%C_RESET%
         pause
         exit /b 1
-    )
-
-    copy ".env.example" ".env" >nul
-    echo %C_YELLOW%  →  Created .env from template. You must fill in your API keys before launching.%C_RESET%
-    echo.
-    echo %C_WHITE%  Required keys in .env:%C_RESET%
-    echo %C_DIM%    AZURE_OPENAI_KEY      — your Azure OpenAI (or OpenAI) API key%C_RESET%
-    echo %C_DIM%    AZURE_OPENAI_BASE_URL — base URL, e.g. https://api.openai.com/v1/%C_RESET%
-    echo %C_DIM%    AZURE_OPENAI_MODEL    — model name, e.g. gpt-4o%C_RESET%
-    echo %C_DIM%    DEEPGRAM_API_KEY      — your Deepgram API key%C_RESET%
-    echo %C_DIM%    API_KEY               — any string you want as the local API password%C_RESET%
-    echo.
-    set /p "OPEN_ENV=  Type 'open' to edit .env in Notepad now, or press ENTER to skip: "
-    if /i "!OPEN_ENV!"=="open" (
-        start notepad ".env"
-        echo.
-        echo %C_YELLOW%  Edit and SAVE .env in Notepad, then come back here.%C_RESET%
-        pause
-    ) else (
-        echo.
-        echo %C_YELLOW%  Remember to fill in .env before the services can call external APIs.%C_RESET%
-        echo %C_YELLOW%  The containers will start but STT/TTS/IDP will fail without valid keys.%C_RESET%
     )
 ) else (
     echo %C_GREEN%  ✓  .env found%C_RESET%
