@@ -56,8 +56,8 @@ if %errorlevel% equ 0 (
     echo %C_WHITE%  Opening browser...%C_RESET%
     start http://localhost:8000
     echo.
-    echo %C_DIM%  This window will close automatically in 5 seconds.%C_RESET%
-    timeout /t 5 /nobreak >nul
+    echo %C_DIM%  This window will close automatically in 10 seconds...%C_RESET%
+    timeout /t 10 /nobreak
     goto :EOF
 )
 
@@ -203,7 +203,6 @@ echo.
 echo %C_WHITE%  Opening browser...%C_RESET%
 start http://localhost:8000
 echo.
-echo %C_DIM%  This window will close automatically in 5 seconds.%C_RESET%
-echo %C_DIM%  (Services keep running in the background)%C_RESET%
-timeout /t 5 /nobreak >nul
+echo %C_DIM%  Services are running in the background — this window will close in 10 seconds.%C_RESET%
+timeout /t 10 /nobreak
 endlocal
